@@ -1,7 +1,10 @@
 import TextFileParser from "./components/InstructionParser.tsx";
 import React, {useState} from "react";
 import FileUploader from "./components/InstructionParser.tsx";
-
+import UserInput from './components/UserInput/UserInput'
+import CacheInput from './components/UserInput/cacheInput'
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; 
 function App() {
   const [instructionQueue, setInstructionQueue] = useState<string[]>([]);
 
@@ -30,6 +33,10 @@ function App() {
       <>
         <FileUploader onChange={handleFileUpload} />
 
+    <>
+    <ToastContainer />
+    <UserInput></UserInput>
+    <CacheInput/>
     </>
   )
 }
