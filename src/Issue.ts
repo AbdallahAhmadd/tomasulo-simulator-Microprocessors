@@ -1,6 +1,6 @@
 
 import { SystemState , Instructions } from "./types";
-import { getOperandTag , getOperandValue , updateRegisterTag , mapOpcodeToLatencyKey } from "./helpers";
+import { getRegisterTag , getRegisterValue , updateRegisterTag , mapOpcodeToLatencyKey } from "./helpers";
 
 
 //=================================================================================================================//
@@ -15,14 +15,13 @@ export function issueInstruction(systemState: SystemState): SystemState {
       loadBuffer,
       storeBuffer,
       fpRegisterFile,
-      intRegisterFile,
       pc,
       clockCycle,
       latencies,
     } = systemState;
   
     if (pc >= instructionQueue.length) {
-      console.log("No more instructions to issue");
+      console.log("Issued All instructions");
       return systemState; 
     }
   
@@ -43,10 +42,10 @@ export function issueInstruction(systemState: SystemState): SystemState {
         if (availableSlot) {
           availableSlot.busy = true;
           availableSlot.op = opcode;
-          availableSlot.vj = getOperandValue(rs, fpRegisterFile);
-          availableSlot.vk = getOperandValue(rt, fpRegisterFile);
-          availableSlot.qj = getOperandTag(rs, fpRegisterFile);
-          availableSlot.qk = getOperandTag(rt, fpRegisterFile);
+          availableSlot.vj = getRegisterValue(rs, fpRegisterFile);
+          availableSlot.vk = getRegisterValue(rt, fpRegisterFile);
+          availableSlot.qj = getRegisterTag(rs, fpRegisterFile);
+          availableSlot.qk = getRegisterTag(rt, fpRegisterFile);
           availableSlot.timeRemaining = latencies[mapOpcodeToLatencyKey(opcode)];
           availableSlot.tag = `A${fpAddReservationStations.indexOf(availableSlot) + 1}`;
   
@@ -67,10 +66,10 @@ export function issueInstruction(systemState: SystemState): SystemState {
         if (availableSlot) {
           availableSlot.busy = true;
           availableSlot.op = opcode;
-          availableSlot.vj = getOperandValue(rs, fpRegisterFile);
-          availableSlot.vk = getOperandValue(rt, fpRegisterFile);
-          availableSlot.qj = getOperandTag(rs, fpRegisterFile);
-          availableSlot.qk = getOperandTag(rt, fpRegisterFile);
+          availableSlot.vj = getRegisterValue(rs, fpRegisterFile);
+          availableSlot.vk = getRegisterValue(rt, fpRegisterFile);
+          availableSlot.qj = getRegisterTag(rs, fpRegisterFile);
+          availableSlot.qk = getRegisterTag(rt, fpRegisterFile);
           availableSlot.timeRemaining = latencies[mapOpcodeToLatencyKey(opcode)];
           availableSlot.tag = `M${fpMulReservationStations.indexOf(availableSlot) + 1}`;
   
@@ -108,8 +107,8 @@ export function issueInstruction(systemState: SystemState): SystemState {
         if (availableSlot) {
           availableSlot.busy = true;
           availableSlot.address = parseInt(rs); 
-          availableSlot.v = getOperandValue(rt, fpRegisterFile);
-          availableSlot.q = getOperandTag(rt, fpRegisterFile);
+          availableSlot.v = getRegisterValue(rt, fpRegisterFile);
+          availableSlot.q = getRegisterTag(rt, fpRegisterFile);
           availableSlot.timeRemaining = latencies[mapOpcodeToLatencyKey(opcode)];
           availableSlot.tag = `S${storeBuffer.indexOf(availableSlot) + 1}`;
   
@@ -119,7 +118,7 @@ export function issueInstruction(systemState: SystemState): SystemState {
       }
   
       default:
-        console.error(`Unsupported opcode: ${opcode}`);
+        console.error(`Opcode not found: ${opcode}`);
     }
 
     //=================================================================================================================//
@@ -131,7 +130,7 @@ export function issueInstruction(systemState: SystemState): SystemState {
       updatedInstructionTable.push({
         instruction: currentInstruction,
         issue: clockCycle,
-        execution_complete: "Didn't execute yet",
+        execution_complete: `${clockCycle}...` ,
         writeResult: -1,
       });
   
