@@ -1,4 +1,35 @@
-import {LoadBuffer, ReservationStation, StoreBuffer , registerFileEntry , instruction ,Instructions, latencies} from "./types";
+import { LoadBuffer, ReservationStation, StoreBuffer, registerFileEntry, instruction, Instructions, latencies } from "./types";
+
+
+{/*********** Issue ***********/ }
+
+export const InstructionParser = (StringInstructions: string[]) => {
+    let parsedInstructions: instruction[] = [];
+    let isLoop = false;
+    StringInstructions.forEach((instruction) => {
+
+        if (instruction.includes(":")) {
+            const split = instruction.split(":"); // ["LOOP", "L.D F0, R1"]
+            split.shift(); //[ "L.D F0, R1"]
+            instruction = split.join("").trim(); // "L.D F0, R1"
+            isLoop = true;
+        }
+
+        const [opcode, rs, rt, rd] = instruction.split(" ");
+
+        if (!opcode || !rs || !rt) {
+            console.error("Invalid instruction format:", instruction);
+            return;
+        }
+
+        parsedInstructions.push({ opcode, rs, rt, rd, isLoop });
+        isLoop = false;
+    });
+
+    return parsedInstructions;
+
+}
+
 
 export const initializeLoadBuffer = (size: number): LoadBuffer[] => {
     return Array.from({ length: size }, (_, i) => ({
@@ -48,24 +79,75 @@ export const initializeMulStations = (size: number): ReservationStation[] => {
     }));
 };
 
-export function getRegisterValue(register: string, registerFile: registerFileEntry[]): number {
+export const initializeRegisterFile = (size: number): registerFileEntry[] => {
+    return Array.from({ length: size }, (_, i) => ({
+        registerName: `R${i}`,
+        Q: "",
+        value: 0,
+    }));
+};
+
+//To do Initialize Memory
+
+//To do Initialize Cache
+
+
+export const InitializeLatencies = (DADDI: number,
+    DSUBI: number,
+    ADD_D: number,
+    ADD_S: number,
+    SUB_D: number,
+    SUB_S: number,
+    MUL_D: number,
+    MUL_S: number,
+    DIV_D: number,
+    DIV_S: number,
+    LW: number,
+    LD: number,
+    L_S: number,
+    L_D: number,): latencies => {
+    return {
+        DADDI,
+        DSUBI,
+        ADD_D,
+        ADD_S,
+        SUB_D,
+        SUB_S,
+        MUL_D,
+        MUL_S,
+        DIV_D,
+        DIV_S,
+        LW,
+        LD,
+        L_S,
+        L_D,
+    };
+}
+
+
+
+
+{/*********** Execute ***********/ }
+
+
+export function getOperandValue(register: string, registerFile: registerFileEntry[]): number {
     const entry = registerFile.find((reg) => reg.registerName === register);
-    return entry?.Q ? 0 : entry?.value || 0; 
-  }
-  
- export function getRegisterTag(register: string, registerFile: registerFileEntry[]): string {
+    return entry?.Q ? 0 : entry?.value || 0;
+}
+
+export function getRegisterTag(register: string, registerFile: registerFileEntry[]): string {
     const entry = registerFile.find((reg) => reg.registerName === register);
-    return entry?.Q || ""; 
-  }
-  
- export function updateRegisterTag(register: string, tag: string, registerFile: registerFileEntry[]): void {
+    return entry?.Q || "";
+}
+
+export function updateRegisterTag(register: string, tag: string, registerFile: registerFileEntry[]): void {
     const entry = registerFile.find((reg) => reg.registerName === register);
     if (entry) {
-      entry.Q = tag; 
+        entry.Q = tag;
     }
-  }
-  
-  export function mapOpcodeToLatencyKey(opcode: Instructions): keyof latencies {
+}
+
+export function mapOpcodeToLatencyKey(opcode: Instructions): keyof latencies {
     switch (opcode) {
         case Instructions.DADDI:
             return "DADDI";
@@ -124,30 +206,8 @@ export function updateRegisterFiles(value: number, tag: string, registerFile: re
 }
 
 
-export const InstructionParser = (StringInstructions: string[]) => {
-    let parsedInstructions: instruction[] = [];
-    let isLoop = false;
-    StringInstructions.forEach((instruction) => {
-       
-        if (instruction.includes(":")) {
-            const split = instruction.split(":"); // ["LOOP", "L.D F0, R1"]
-            split.shift(); //[ "L.D F0, R1"]
-            instruction = split.join("").trim(); // "L.D F0, R1"
-            isLoop = true;
-        }
 
-        const [opcode, rs, rt, rd] = instruction.split(" ");
 
-        if (!opcode || !rs || !rt) {
-            console.error("Invalid instruction format:", instruction);
-            return;
-        }
 
-        parsedInstructions.push({ opcode, rs, rt, rd, isLoop});
-        isLoop = false;
-    });
 
-    return parsedInstructions;
-
-}
 
