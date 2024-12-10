@@ -29,7 +29,7 @@ export const initializeAddStations = (size: number): ReservationStation[] => {
         vk: 0,
         qj: "0",
         qk: "0",
-        A: "",
+        A: 0,
         timeRemaining: 0,
     }));
 };
@@ -43,7 +43,7 @@ export const initializeMulStations = (size: number): ReservationStation[] => {
         vk: 0,
         qj: "0",
         qk: "0",
-        A: "",
+        A: 0,
         timeRemaining: 0,
     }));
 };
