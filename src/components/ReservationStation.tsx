@@ -1,5 +1,5 @@
 import { useState } from "react";
-import VisuallyHiddenInput from "@mui/material/VisuallyHiddenInput"; // Add this line if VisuallyHiddenInput is a part of MUI
+
 import {
   Table,
   TableBody,
@@ -25,6 +25,7 @@ export default function ReservationStation() {
     }[]
   >([]);
   const [rowCount, setRowCount] = useState(0);
+  
 
   //toDo remove input field and take input from user once
   interface Row {
@@ -56,20 +57,7 @@ export default function ReservationStation() {
 
   return (
     <div>
-      <Button
-        component="label"
-        role={undefined}
-        variant="contained"
-        tabIndex={-1}
-        startIcon={<CloudUploadIcon />}
-      >
-        Upload files
-        <VisuallyHiddenInput
-          type="file"
-          onChange={(event) => console.log(event.target.files)}
-          multiple
-        />
-      </Button>
+
 
       {/* Input for number of rows */}
       <div style={{ marginBottom: "16px", display: "flex", gap: "8px" }}>
