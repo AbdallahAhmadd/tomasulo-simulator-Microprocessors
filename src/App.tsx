@@ -4,11 +4,18 @@ import FileUploader from "./components/InstructionParser.tsx";
 import UserInput from './components/UserInput/UserInput'
 import CacheInput from './components/UserInput/cacheInput'
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import "react-toastify/dist/ReactToastify.css";
+import InstructionTable from "./components/InstructionsTable.tsx";
 function App() {
   const [instructionQueue, setInstructionQueue] = useState<string[]>([]);
+  const [loadSize, setLoadSize] = useState<number>(0);
+  const [storeSize, setStoreSize] = useState<number>(0);
+  const [addReservationStationsNums, setAddReservationStationsNums] = useState<number>(0);
+  const [mulReservationStationsNums, setMulReservationStationsNums] = useState<number>(0);
+  const [cacheSize, setCacheSize] = useState<number>(0);
+  const [blockSize, setBlockSize] = useState<number>(0);
+  const [latencies, setLatencies] = useState<number[]>([]);
 
-  console.log(instructionQueue);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -32,11 +39,10 @@ function App() {
   return (
       <>
         <FileUploader onChange={handleFileUpload} />
-
-    <>
-    <ToastContainer />
-    <UserInput></UserInput>
-    <CacheInput/>
+        {/*<ToastContainer />*/}
+        {/*<UserInput></UserInput>*/}
+        <InstructionTable />
+        {/*<CacheInput/>*/}
     </>
   )
 }

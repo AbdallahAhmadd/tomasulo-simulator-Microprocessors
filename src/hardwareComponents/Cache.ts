@@ -5,6 +5,7 @@ interface block {
     valid: boolean;
     tag: number;
     data: number[];
+    decimalData: number;
 }
 
 export class Cache {

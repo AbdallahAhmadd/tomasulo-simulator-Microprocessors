@@ -3,8 +3,7 @@ import {Cache} from '../../hardwareComponents/cache'; // Import the Cache class
 import './UserInput.css'
 import { toast } from 'react-toastify';
 const CacheInput: React.FC = () => {
-    const [cacheSize, setCacheSize] = useState<number>(0);
-    const [blockSize, setBlockSize] = useState<number>(0);
+
     const [cache, setCache] = useState<Cache | null>(null);
 
     const handleCreateCache = () => {

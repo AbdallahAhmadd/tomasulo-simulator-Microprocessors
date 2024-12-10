@@ -1,46 +1,18 @@
 import React, { useState } from "react";
+import {LoadBuffer, StoreBuffer} from "../types";
 
 
-type LoadBuffer = {
-  name: string;
-  busy: number;  
-  address: string;
-};
 
-type StoreBuffer = {
-    name: string;
-    busy: number;  
-    address: string;
-    v: string;
-    q: string;
-  };
+
+
   
 const LoadAndStoreSimulator: React.FunctionComponent = () => {
-  const [loadSize, setLoadSize] = useState<number>(0);
-  const [storeSize, setStoreSize] = useState<number>(0);
+
 
   const [loadBuffer, setLoadBuffer] = useState<LoadBuffer[]>([]);
   const [storeBuffer, setStoreBuffer] = useState<StoreBuffer[]>([]);
 
-  const initializeLoadBuffer = (size: number): LoadBuffer[] => {
-    return Array.from({ length: size }, (_, i) => ({
-      name: `L${i + 1}`,
-      busy: 0,
-      address: "",
-      tag: "",
-      timeRemaining: 0,
-    }));
-  };
 
-  const initializeStoreBuffer = (size: number): StoreBuffer[] => {
-    return Array.from({ length: size }, (_, i) => ({
-      name: `M${i + 1}`, 
-      busy: 0,
-      v: "",
-      q: "",
-      address: "",
-    }));
-  };
 
   const createLoadBuffer = () => {
     setLoadBuffer(initializeLoadBuffer(loadSize));
