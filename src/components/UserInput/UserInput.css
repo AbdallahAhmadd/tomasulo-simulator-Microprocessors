@@ -1,0 +1,224 @@
+/* General Container */
+.container {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f9f9f9;
+    padding: 40px;
+    width: 1200px;
+    margin: 0 auto;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Center content vertically */
+    overflow: hidden;
+    min-height: 600px; /* Ensures a consistent minimum height */
+    height: auto; /* Can grow if needed, but won't shrink below the minimum height */
+    transition: all 0.3s ease-in-out;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    left: 5%; /* Vertically center the container */
+    margin-bottom: 15px;
+}
+
+
+/* Header */
+.header {
+    font-size: 3rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Sub-header */
+.sub-header {
+    color: #555;
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* Form Container */
+.form {
+    width: 100%;
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+    width: 900px;
+}
+
+/* Form Elements: Input Fields, Select Fields, Labels */
+label {
+    font-size: 1.2rem;
+    color: #444;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+/* Input and Select Styling */
+input,
+select {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 1rem;
+    line-height: 1.5;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background-color: #fafafa;
+    color: #333;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+    width: 400px;
+}
+
+input:focus,
+select:focus {
+    border-color: #0088cc;
+    box-shadow: 0 0 5px rgba(0, 136, 204, 0.5);
+    outline: none;
+}
+
+/* Button Styling */
+button {
+    grid-column: span 2;
+    padding: 16px;
+    background-color: #0088cc;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #006f99;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    background-color: #c5c5c5;
+    cursor: not-allowed;
+}
+.execute {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-left: 50px;
+}
+/* Instructions List */
+ul {
+    padding: 0;
+    margin: 20px 0;
+    list-style-type: none;
+    width: 100%;
+    font-size: 1.1rem;
+    color: #444;
+}
+
+li {
+    background-color: #ffffff;
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+    color: #333;
+    transition: background-color 0.3s, transform 0.3s ease;
+    cursor: pointer;
+}
+
+li:hover {
+    background-color: #f1f1f1;
+    transform: translateY(-5px);
+}
+
+li:active {
+    background-color: #ececec;
+    transform: translateY(2px);
+}
+
+/* Error Message Styling */
+.error {
+    color: #e74c3c;
+    font-size: 1.1rem;
+    margin-top: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 30px;
+    }
+
+    .header {
+        font-size: 2.4rem;
+    }
+
+    .sub-header {
+        font-size: 1.4rem;
+    }
+
+    .form {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    button {
+        grid-column: span 1;
+    }
+
+    ul {
+        margin-top: 15px;
+    }
+
+    li {
+        font-size: 1rem;
+    }
+}
+/* Container for the cache information */
+.cache-info-container {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    margin: 10px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Heading */
+  .cache-info-container h3 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  /* Paragraphs */
+  .cache-info-container p {
+    font-size: 1em;
+    color: #555;
+    margin: 5px 0;
+  }
+  
+  /* Style for cache size and block size for better emphasis */
+  .cache-info-container p span {
+    font-weight: bold;
+    color: #2d9cdb;
+  }
+  
