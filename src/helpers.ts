@@ -1,4 +1,4 @@
-import {LoadBuffer, ReservationStation, StoreBuffer , registerFileEntry , Instructions , latencies} from "./types";
+import {LoadBuffer, ReservationStation, StoreBuffer , registerFileEntry , instruction ,Instructions, latencies} from "./types";
 
 export const initializeLoadBuffer = (size: number): LoadBuffer[] => {
     return Array.from({ length: size }, (_, i) => ({
