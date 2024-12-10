@@ -130,10 +130,10 @@ export const InitializeLatencies = (DADDI: number,
 {/*********** Execute ***********/ }
 
 
-export function getOperandValue(register: string, registerFile: registerFileEntry[]): number {
+export function getRegisterValue(register: string, registerFile: registerFileEntry[]): number {
     const entry = registerFile.find((reg) => reg.registerName === register);
-    return entry?.Q ? 0 : entry?.value || 0;
-}
+    return entry?.Q ? 0 : entry?.value || 0; 
+  }
 
 export function getRegisterTag(register: string, registerFile: registerFileEntry[]): string {
     const entry = registerFile.find((reg) => reg.registerName === register);
