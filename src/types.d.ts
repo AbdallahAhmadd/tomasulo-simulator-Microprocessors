@@ -1,8 +1,9 @@
 export interface instruction {
     opcode: string;
-    rd: string;
     rs: string;
     rt: string;
+    rd: string;
+    isLoop?:Boolean;
 }
 
 export interface ReservationStation {
