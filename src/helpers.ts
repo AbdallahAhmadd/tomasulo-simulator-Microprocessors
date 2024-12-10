@@ -48,12 +48,12 @@ export const initializeMulStations = (size: number): ReservationStation[] => {
     }));
 };
 
-export function getOperandValue(register: string, registerFile: registerFileEntry[]): number {
+export function getRegisterValue(register: string, registerFile: registerFileEntry[]): number {
     const entry = registerFile.find((reg) => reg.registerName === register);
     return entry?.Q ? 0 : entry?.value || 0; 
   }
   
- export function getOperandTag(register: string, registerFile: registerFileEntry[]): string {
+ export function getRegisterTag(register: string, registerFile: registerFileEntry[]): string {
     const entry = registerFile.find((reg) => reg.registerName === register);
     return entry?.Q || ""; 
   }
@@ -97,6 +97,29 @@ export function getOperandValue(register: string, registerFile: registerFileEntr
             return "L_D";
         default:
             throw new Error(`Unsupported opcode: ${opcode}`);
+    }
+}
+
+
+export function broadcastResult(value: number, tag: string, stations: ReservationStation[]): void {
+    for (const station of stations) {
+        if (station.qj === tag) {
+            station.vj = value; 
+            station.qj = "";    
+        }
+        if (station.qk === tag) {
+            station.vk = value; 
+            station.qk = "";    
+        }
+    }
+}
+
+export function updateRegisterFiles(value: number, tag: string, registerFile: registerFileEntry[]): void {
+    for (const reg of registerFile) {
+        if (reg.Q === tag) {
+            reg.value = value; 
+            reg.Q = "";        
+        }
     }
 }
 
