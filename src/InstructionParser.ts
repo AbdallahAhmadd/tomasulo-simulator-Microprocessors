@@ -10,12 +10,9 @@ const lines = data.split(/\r?\n/);
 const instructions = lines.map((line) => {
     //this removes commas and add blanks
     const cleanedLine = line.replace(/,/g, '');
-    //split on space
-    const tokens = cleanedLine.split(' ').filter((t) => t !== ''); 
-    return tokens;
+    return cleanedLine;
 });
-
-return instructions;
-
+return instructions.filter((line) => line.length > 0);
 }
+
 
