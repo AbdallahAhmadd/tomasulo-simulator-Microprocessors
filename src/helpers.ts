@@ -1,4 +1,4 @@
-import {LoadBuffer, ReservationStation, reservationStation, StoreBuffer} from "./types";
+import {LoadBuffer, ReservationStation, StoreBuffer , registerFileEntry , Instructions , latencies} from "./types";
 
 export const initializeLoadBuffer = (size: number): LoadBuffer[] => {
     return Array.from({ length: size }, (_, i) => ({
@@ -47,3 +47,55 @@ export const initializeMulStations = (size: number): ReservationStation[] => {
         timeRemaining: 0,
     }));
 };
+
+export function getOperandValue(register: string, registerFile: registerFileEntry[]): number {
+    const entry = registerFile.find((reg) => reg.registerName === register);
+    return entry?.Q ? 0 : entry?.value || 0; 
+  }
+  
+ export function getOperandTag(register: string, registerFile: registerFileEntry[]): string {
+    const entry = registerFile.find((reg) => reg.registerName === register);
+    return entry?.Q || ""; 
+  }
+  
+ export function updateRegisterTag(register: string, tag: string, registerFile: registerFileEntry[]): void {
+    const entry = registerFile.find((reg) => reg.registerName === register);
+    if (entry) {
+      entry.Q = tag; 
+    }
+  }
+  
+  export function mapOpcodeToLatencyKey(opcode: Instructions): keyof latencies {
+    switch (opcode) {
+        case Instructions.DADDI:
+            return "DADDI";
+        case Instructions.DSUBI:
+            return "DSUBI";
+        case Instructions.ADD_D:
+            return "ADD_D";
+        case Instructions.ADD_S:
+            return "ADD_S";
+        case Instructions.SUB_D:
+            return "SUB_D";
+        case Instructions.SUB_S:
+            return "SUB_S";
+        case Instructions.MUL_D:
+            return "MUL_D";
+        case Instructions.MUL_S:
+            return "MUL_S";
+        case Instructions.DIV_D:
+            return "DIV_D";
+        case Instructions.DIV_S:
+            return "DIV_S";
+        case Instructions.LW:
+            return "LW";
+        case Instructions.LD:
+            return "LD";
+        case Instructions.L_S:
+            return "L_S";
+        case Instructions.L_D:
+            return "L_D";
+        default:
+            throw new Error(`Unsupported opcode: ${opcode}`);
+    }
+}

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import {LoadBuffer, StoreBuffer} from "../types";
-
-
-
+import { initializeLoadBuffer } from "../helpers";
+import { initializeStoreBuffer } from "../helpers";
 
 
   
@@ -55,7 +54,7 @@ const LoadAndStoreSimulator: React.FunctionComponent = () => {
           <ul>
             {loadBuffer.map((station, index) => (
               <li key={index}>
-                {station.name}: {station.busy ? "Busy" : "Free"}
+                {station.tag}: {station.busy ? "Busy" : "Free"}
               </li>
             ))}
           </ul>
@@ -68,7 +67,7 @@ const LoadAndStoreSimulator: React.FunctionComponent = () => {
           <ul>
             {storeBuffer.map((station, index) => (
               <li key={index}>
-                {station.name}: {station.busy ? "Busy" : "Free"}
+                {station.tag}: {station.busy ? "Busy" : "Free"}
               </li>
             ))}
           </ul>
