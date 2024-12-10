@@ -39,4 +39,9 @@ export interface fpRegisterFile {
     value: number;
 }
 
-export
+export interface instructionTable{
+    instruction: instruction[];
+    issue: number;
+    execution_complete: string;
+    writeResult: number;
+}
