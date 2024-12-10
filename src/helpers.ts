@@ -99,3 +99,32 @@ export function getOperandValue(register: string, registerFile: registerFileEntr
             throw new Error(`Unsupported opcode: ${opcode}`);
     }
 }
+
+
+export const InstructionParser = (StringInstructions: string[]) => {
+    let parsedInstructions: instruction[] = [];
+    let isLoop = false;
+    StringInstructions.forEach((instruction) => {
+       
+        if (instruction.includes(":")) {
+            const split = instruction.split(":"); // ["LOOP", "L.D F0, R1"]
+            split.shift(); //[ "L.D F0, R1"]
+            instruction = split.join("").trim(); // "L.D F0, R1"
+            isLoop = true;
+        }
+
+        const [opcode, rs, rt, rd] = instruction.split(" ");
+
+        if (!opcode || !rs || !rt) {
+            console.error("Invalid instruction format:", instruction);
+            return;
+        }
+
+        parsedInstructions.push({ opcode, rs, rt, rd, isLoop});
+        isLoop = false;
+    });
+
+    return parsedInstructions;
+
+}
+
