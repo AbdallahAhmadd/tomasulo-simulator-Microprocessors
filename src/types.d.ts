@@ -1,12 +1,12 @@
 import { Cache } from "./cache";
 import { Memory } from "./hardwareComponents/Memory";
-import {Instructions} from "./enums.ts";
+import { Instructions } from "./enums.ts";
 export interface instruction {
-    opcode: Instructions;
-    rd: string;
-    rs: string;
-    rt: string;
-    labelAddress?:string;
+  opcode: Instructions;
+  rd: string;
+  rs: string;
+  rt: string;
+  labelAddress?: string;
 }
 
 export interface ReservationStation {
@@ -37,6 +37,15 @@ export interface StoreBuffer {
   timeRemaining: number;
 }
 
+export interface intReservationStation {
+  tag: string;
+  busy: boolean;
+  value: number;
+  v: number;
+  q: string;
+  timeRemaining: number;
+}
+
 export interface registerFileEntry {
   registerName: string;
   Q: string;
@@ -49,8 +58,6 @@ export interface instructionEntry {
   execution_complete: string;
   writeResult: number;
 }
-
-
 
 export interface latencies {
   DADDI: number;
@@ -67,12 +74,12 @@ export interface latencies {
   LD: number;
   L_S: number;
   L_D: number;
-    SW : number,
-    SD : number,  
-    S_S : number, 
-    S_D: number,
-    BNE: number, 
-    BEQ: number
+  SW: number;
+  SD: number;
+  S_S: number;
+  S_D: number;
+  BNE: number;
+  BEQ: number;
 }
 
 export interface SystemState {
@@ -80,8 +87,8 @@ export interface SystemState {
   instructionQueue: instruction[];
   fpAddReservationStations: ReservationStation[];
   fpMulReservationStations: ReservationStation[];
-  intAddReservationStations: ReservationStation[];
-  intMulReservationStations: ReservationStation[];
+  intAddReservationStations: intReservationStation[];
+  intMulReservationStations: intReservationStation[];
   loadBuffer: LoadBuffer[];
   storeBuffer: StoreBuffer[];
   fpRegisterFile: registerFileEntry[];
