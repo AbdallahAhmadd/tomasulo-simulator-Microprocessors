@@ -34,7 +34,7 @@ function App() {
       setInstructionQueue(cleanedInstructions);
     };
 
-    reader.readAsText(file); // Read the file as text
+    reader.readAsText(file);
   };
   return (
       <>
