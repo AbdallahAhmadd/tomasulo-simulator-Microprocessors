@@ -49,7 +49,7 @@ export function execute(newState: SystemState) {
         console.log(`Executing instruction at fp Multiply station ${index}`);
         const value1 = station.vj;
         const value2 = station.vk;
-        const result = AluOperation(value1, value2, station.op);
+        station.result = AluOperation(value1, value2, station.op);
       } else {
         station.timeRemaining -= 1;
       }
@@ -81,4 +81,29 @@ export function execute(newState: SystemState) {
       }
     }
   });
+
+
+  newState.loadBuffer.forEach((buffer, index) => {
+    if (buffer.busy) {
+      if (buffer.timeRemaining === 0) {
+        //Todo complete logic
+      } else {
+        buffer.timeRemaining --;
+      }
+    }
+
+  });
+
+  newState.storeBuffer.forEach((buffer, index) => {
+    if (buffer.busy) {
+      if (buffer.timeRemaining === 0) {
+        //Todo complete logic
+      } else {
+        buffer.timeRemaining --;
+      }
+    }
+  });
+
 }
+
+
