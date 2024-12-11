@@ -1,21 +1,28 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import FileUploader from "./components/InstructionParser.tsx";
 import "react-toastify/dist/ReactToastify.css";
 import InstructionTable from "./components/InstructionsTable.tsx";
+import LatencyInput from "../src/components/UserInput/LatencyInput.tsx";
+import { latencies } from "./types";
 function App() {
   const [instructionQueue, setInstructionQueue] = useState<string[]>([]);
   const [fpAddReservationStationsNums, setfpAddReservationStationsNums] = useState<number>(0);
   const [fpMulReservationStationsNums, setfpMulReservationStationsNums] = useState<number>(0);
-  const [intAddReservationStationsNums, setIntAddReservationStationsNums]= useState()
-  const [intMulReservationStationsNums, setIntMulReservationStationsNums]= useState()
+  const [intAddReservationStationsNums, setIntAddReservationStationsNums]= useState();
+  const [intMulReservationStationsNums, setIntMulReservationStationsNums]= useState();
   const [loadBufferSize, setLoadBufferSize] = useState<number>(0);
   const [storeBufferSize, setStoreBufferSize] = useState<number>(0);
   const [fpRegisterFileSize, setfpRegisterFileSize] = useState<number>(0);
   const [intRegisterFileSize, setIntRegisterFileSize] = useState<number>(0);
   const [cacheSize, setCacheSize] = useState<number>(0);
   const [blockSize, setBlockSize] = useState<number>(0);
-  const [latencies, setLatencies] = useState<number[]>([]);
+  const [latencies, setLatencies] = useState<latencies>();
 
+  const handleLatancySave = (updatedLatencies: latencies) => {
+    console.log("Received latencies:", updatedLatencies);
+    setLatencies(updatedLatencies);
+    
+  };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -36,14 +43,13 @@ function App() {
 
     reader.readAsText(file);
   };
+
   return (
       <>
         <div>
         <FileUploader onChange={handleFileUpload} />
-        {/*<ToastContainer />*/}
-        {/*<UserInput></UserInput>*/}
-        <InstructionTable />
-        {/*<CacheInput/>*/}
+        <LatencyInput onSave={handleLatancySave} />
+
         </div>
     </>
   )
