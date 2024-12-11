@@ -53,6 +53,11 @@ export interface instructionEntry {
   writeResult?: number;
 }
 
+export interface commonDataBus {
+  tag: string;
+  value: number;
+}
+
 export interface latencies {
   DADDI: number;
   DSUBI: number;
@@ -87,6 +92,7 @@ export interface SystemState {
   storeBuffer: StoreBuffer[];
   fpRegisterFile: registerFileEntry[];
   intRegisterFile: registerFileEntry[];
+  CDB: commonDataBus;
   memory: Memory;
   cache: Cache;
   /* simulation state */
