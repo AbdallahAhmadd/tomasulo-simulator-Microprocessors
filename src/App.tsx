@@ -98,7 +98,6 @@ function App() {
     initializeSystem(instructionQueue, SystemConfig);
     console.log("SystemConfig:", SystemConfig);
     console.log('instructionQueue:', instructionQueue);
-    toast.success("Execution started successfully!");
   };
 
   return (
