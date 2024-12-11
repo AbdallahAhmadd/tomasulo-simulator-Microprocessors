@@ -1,25 +1,18 @@
 /* General Container */
 .container {
     font-family: 'Roboto', sans-serif;
-    background-color: #f9f9f9;
-    padding: 40px;
     width: 1200px;
     margin: 0 auto;
     border-radius: 20px;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center; /* Center content vertically */
     overflow: hidden;
-    min-height: 600px; /* Ensures a consistent minimum height */
+    min-height: 350px; /* Ensures a consistent minimum height */
     height: auto; /* Can grow if needed, but won't shrink below the minimum height */
     transition: all 0.3s ease-in-out;
-    overflow-y: auto;
-    overflow-x: hidden;
     position: relative;
-    left: 5%; /* Vertically center the container */
-    margin-bottom: 15px;
 }
 
 
