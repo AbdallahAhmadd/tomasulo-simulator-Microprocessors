@@ -92,43 +92,7 @@ export const initializeRegisterFile = (size: number, type: string): registerFile
   }));
 };
 
-export const InitializeLatencies = (
-  DADDI: number,
-  DSUBI: number,
-  ADD_D: number,
-  ADD_S: number,
-  SUB_D: number,
-  SUB_S: number,
-  MUL_D: number,
-  MUL_S: number,
-  DIV_D: number,
-  DIV_S: number,
-  LW: number,
-  LD: number,
-  L_S: number,
-  L_D: number,
-): latencies => {
-  return {
-    DADDI,
-    DSUBI,
-    ADD_D,
-    ADD_S,
-    SUB_D,
-    SUB_S,
-    MUL_D,
-    MUL_S,
-    DIV_D,
-    DIV_S,
-    LW,
-    LD,
-    L_S,
-    L_D,
-  };
-};
-
-{
-  /*********** Issue ***********/
-}
+/*********** Issue ***********/
 export function isRegisterAvailable(register: string, registerFile: registerFileEntry[]): boolean {
   const entry = registerFile.find((reg) => reg.registerName === register);
   return entry?.Q === "0";
