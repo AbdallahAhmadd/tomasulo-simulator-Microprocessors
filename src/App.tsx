@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import FileUploader from "./components/InstructionParser.tsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "react-toastify/dist/ReactToastify.css";
 import InstructionTable from "./components/InstructionsTable.tsx";
 import LatencyInput from "../src/components/UserInput/LatencyInput.tsx";
 import { latencies, SystemConfig } from "./types";
@@ -99,6 +98,7 @@ function App() {
     initializeSystem(instructionQueue, SystemConfig);
     console.log("SystemConfig:", SystemConfig);
     console.log('instructionQueue:', instructionQueue);
+    toast.success("Execution started successfully!");
   };
 
   return (
