@@ -38,7 +38,6 @@ export interface StoreBuffer {
   timeRemaining: number;
 }
 
-
 export interface registerFileEntry {
   registerName: string;
   Q: string;
