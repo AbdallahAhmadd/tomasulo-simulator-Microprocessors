@@ -22,14 +22,9 @@ export const parseInstructions = (StringInstructions: string[]) => {
       split.shift(); //[ "L.D F0, R1"]
       instruction = split.join("").trim(); // "L.D F0, R1"
     }
-    const [opcodeStr, rd, rs, rt] = instruction.split(" ");
-    const opcode = Instructions[opcodeStr as keyof typeof Instructions];
+    const [opcode, rd, rs, rt] = instruction.split(" ");
 
-    if (!opcode || !rs || !rt) {
-      console.error("Invalid instruction format:", instruction);
-      return;
-    }
-    parsedInstructions.push({ opcode, rd, rs, rt, labelAddress });
+    parsedInstructions.push({ opcode: opcode as Instructions, rd, rs, rt, labelAddress });
     labelAddress = "";
   });
 
