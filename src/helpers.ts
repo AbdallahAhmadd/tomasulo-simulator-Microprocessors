@@ -1,29 +1,28 @@
-import { LoadBuffer, ReservationStation, StoreBuffer, registerFileEntry, instruction, Instructions, latencies } from "./types";
-
+import type { LoadBuffer, ReservationStation, StoreBuffer, registerFileEntry, instruction, latencies } from "./types.d.ts";
+import  {Instructions}  from "./enums";
 
 {/*********** Issue ***********/ }
 
 export const InstructionParser = (StringInstructions: string[]) => {
     let parsedInstructions: instruction[] = [];
-    let isLoop = false;
+    let labelAddress = "";
     StringInstructions.forEach((instruction) => {
 
         if (instruction.includes(":")) {
             const split = instruction.split(":"); // ["LOOP", "L.D F0, R1"]
+            labelAddress = split[0].trim(); // "LOOP"
             split.shift(); //[ "L.D F0, R1"]
             instruction = split.join("").trim(); // "L.D F0, R1"
-            isLoop = true;
+           
         }
-
-        const [opcode, rs, rt, rd] = instruction.split(" ");
+        const [opcode, rd, rs, rt] = instruction.split(" ");
 
         if (!opcode || !rs || !rt) {
             console.error("Invalid instruction format:", instruction);
             return;
         }
-
-        parsedInstructions.push({ opcode, rs, rt, rd, isLoop });
-        isLoop = false;
+        parsedInstructions.push({ opcode, rd, rs, rt, labelAddress });
+        labelAddress = "";
     });
 
     return parsedInstructions;

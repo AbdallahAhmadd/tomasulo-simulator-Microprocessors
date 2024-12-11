@@ -1,5 +1,6 @@
 
-import { SystemState , Instructions } from "./types";
+import { SystemState  } from "./types";
+import {Instructions} from "./enums";
 import { getRegisterTag , getRegisterValue , updateRegisterTag , mapOpcodeToLatencyKey } from "./helpers";
 
 
