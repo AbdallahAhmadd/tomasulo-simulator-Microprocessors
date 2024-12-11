@@ -64,6 +64,12 @@ export interface latencies {
     LD : number,
     L_S : number,
     L_D : number,
+    SW : number,
+    SD : number,  
+    S_S : number, 
+    S_D: number,
+    BNE: number, 
+    BEQ: number
 }
 
 export interface SystemState {
