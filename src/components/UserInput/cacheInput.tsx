@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
-import {Cache} from '../../hardwareComponents/cache'; // Import the Cache class
+import {Cache} from '../../hardwareComponents/Cache'; // Import the Cache class
 import './UserInput.css'
 import { toast } from 'react-toastify';
-const CacheInput: React.FC = () => {
 
-    const [cache, setCache] = useState<Cache | null>(null);
+interface CacheInputProps {
+    onSave: (cacheSize: number, blockSize: number) => void;
+}
+
+const CacheInput: React.FC<CacheInputProps> = ({ onSave }) => {
+    const [cacheSize, setCacheSize] = useState<number>(0);
+    const [blockSize, setBlockSize] = useState<number>(0);
+    const [cacheInfo, setCacheInfo] = useState<{ cacheSize: number, blockSize: number, numberOfBlocks: number } | null>(null); // Store cache info
+    //const [cache, setCache] = useState<Cache | null>(null);
+
 
     const handleCreateCache = () => {
         if ((cacheSize > 0 && blockSize > 0) && !(blockSize >= cacheSize)) {
-            const newCache = new Cache(cacheSize, blockSize);
-            setCache(newCache);
+            //const newCache = new Cache(cacheSize, blockSize);
+            //setCache(newCache);
+            const numberOfBlocks = Math.floor(cacheSize / blockSize);
+            setCacheInfo({ cacheSize, blockSize, numberOfBlocks }); // Store cache info
+            onSave(cacheSize, blockSize);
             toast.success('Cache successfully created!');
         } else {
             toast.error('Please enter valid positive values for cache size and block size.');
@@ -45,7 +56,7 @@ const CacheInput: React.FC = () => {
             <button onClick={handleCreateCache}>Create Cache</button>
             </div>
 
-            {cache && (
+            {cacheInfo && (
                 <div className='cache-info-container'>
                     <h3>Cache Created</h3>
                     <p>Cache Size: {cacheSize} bytes</p>
