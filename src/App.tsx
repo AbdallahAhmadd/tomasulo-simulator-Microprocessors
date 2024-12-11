@@ -2,16 +2,16 @@ import React, {useEffect, useState} from "react";
 import FileUploader from "./components/InstructionParser.tsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "react-toastify/dist/ReactToastify.css";
 import InstructionTable from "./components/InstructionsTable.tsx";
 import LatencyInput from "../src/components/UserInput/LatencyInput.tsx";
-import { latencies } from "./types";
+import { latencies, SystemConfig } from "./types";
 import CacheInput from "./components/UserInput/cacheInput.tsx";
 import ReservationStation from "./components/ReservationStation.tsx";
 import FpReservationStationInput from "./components/UserInput/FpReservationStations.tsx";
 import IntReservationStationInput from "./components/UserInput/IntReservationStations.tsx";
 import BufferConfiguration from "./components/UserInput/BufferConfiguration.tsx";
 import RegisterFileConfiguration from "./components/UserInput/RegisterFileConfiguration.tsx";
+import {initializeSystem} from "./simulator.ts";  
 function App() {
   const [instructionQueue, setInstructionQueue] = useState<string[]>([]);
   const [fpAddReservationStationsNums, setfpAddReservationStationsNums] = useState<number>(0);
@@ -25,6 +25,7 @@ function App() {
   const [cacheSize, setCacheSize] = useState<number>(0);
   const [blockSize, setBlockSize] = useState<number>(0);
   const [latencies, setLatencies] = useState<latencies>();
+
 
   const handleLatancySave = (updatedLatencies: latencies) => {
     console.log("Received latencies:", updatedLatencies);
@@ -76,6 +77,29 @@ function App() {
 
     reader.readAsText(file);
   };
+  const handleExecution = () => {
+    if (!latencies) {
+      toast.error("Please provide latency values.");
+      return;
+    }
+    const SystemConfig : SystemConfig = {
+      fpAddReservationStationsSize: fpAddReservationStationsNums,
+      fpMulReservationStationsSize: fpMulReservationStationsNums,
+      intAddReservationStationsSize: intAddReservationStationsNums,
+      intMulReservationStationsSize: intMulReservationStationsNums,
+      fpRegisterFileSize,
+      intRegisterFileSize,
+      loadBufferSize,
+      storeBufferSize,
+      cacheSize,
+      blockSize,
+      latencies
+    };
+    initializeSystem(instructionQueue, SystemConfig);
+    console.log("SystemConfig:", SystemConfig);
+    console.log('instructionQueue:', instructionQueue);
+    toast.success("Execution started successfully!");
+  };
 
   return (
       <>
@@ -87,6 +111,9 @@ function App() {
         <IntReservationStationInput onSave={handleIntReservationStation} />
         <BufferConfiguration onSave={handleBufferSaveConfiguration}/>;
         <RegisterFileConfiguration onSave={handleRegisterSaveConfiguration}/>
+        <div className="buttondiv">
+        <button className="execution" onClick={handleExecution}>Start Execution</button>
+        </div>
 
         </div>
         <ToastContainer />
