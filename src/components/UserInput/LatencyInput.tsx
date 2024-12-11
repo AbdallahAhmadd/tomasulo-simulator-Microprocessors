@@ -1,35 +1,13 @@
 import React, { useState } from "react";
 import { latencies } from "../../types";
-const instructions = [
-  "DADDI",
-  "DSUBI",
-  "ADD.D",
-  "ADD.S",
-  "SUB.D",
-  "SUB.S",
-  "MUL.D",
-  "MUL.S",
-  "DIV.D",
-  "DIV.S",
-  "LW",
-  "LD",
-  "L.S",
-  "L.D",
-  "SW",
-  "SD",
-  "S.S",
-  "S.D",
-  "BNE",
-  "BEQ",
-];
-
-interface FileUploaderProps {
+import { Instructions } from "../../enums";
+interface InstructionLatenciesProps {
   onSave: (latencies: latencies) => void;
 }
 
-const InstructionLatencies: React.FC<FileUploaderProps> = ({ onSave }) => {
+const InstructionLatencies: React.FC<InstructionLatenciesProps> = ({ onSave }) => {
   const [latencies, setLatencies] = useState<Record<string, number>>(
-    Object.fromEntries(instructions.map((instr) => [instr, 0])),
+    Object.fromEntries(Object.values(Instructions).map((instr) => [instr, 0])),
   );
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -44,26 +22,26 @@ const InstructionLatencies: React.FC<FileUploaderProps> = ({ onSave }) => {
     setIsDisabled(true);
 
     const formattedLatencies: latencies = {
-      DADDI: latencies["DADDI"] || 0,
-      DSUBI: latencies["DSUBI"] || 0,
-      ADD_D: latencies["ADD.D"] || 0,
-      ADD_S: latencies["ADD.S"] || 0,
-      SUB_D: latencies["SUB.D"] || 0,
-      SUB_S: latencies["SUB.S"] || 0,
-      MUL_D: latencies["MUL.D"] || 0,
-      MUL_S: latencies["MUL.S"] || 0,
-      DIV_D: latencies["DIV.D"] || 0,
-      DIV_S: latencies["DIV.S"] || 0,
-      LW: latencies["LW"] || 0,
-      LD: latencies["LD"] || 0,
-      L_S: latencies["L.S"] || 0,
-      L_D: latencies["L.D"] || 0,
-      SW: latencies["SW"] || 0,
-      SD: latencies["SD"] || 0,
-      S_S: latencies["S.S"] || 0,
-      S_D: latencies["S.D"] || 0,
-      BNE: latencies["BNE"] || 0,
-      BEQ: latencies["BEQ"] || 0,
+      DADDI: latencies[Instructions.DADDI] || 0,
+      DSUBI: latencies[Instructions.DSUBI] || 0,
+      ADD_D: latencies[Instructions.ADD_D] || 0,
+      ADD_S: latencies[Instructions.ADD_S] || 0,
+      SUB_D: latencies[Instructions.SUB_D] || 0,
+      SUB_S: latencies[Instructions.SUB_S] || 0,
+      MUL_D: latencies[Instructions.MUL_D] || 0,
+      MUL_S: latencies[Instructions.MUL_S] || 0,
+      DIV_D: latencies[Instructions.DIV_D] || 0,
+      DIV_S: latencies[Instructions.DIV_S] || 0,
+      LW: latencies[Instructions.LW] || 0,
+      LD: latencies[Instructions.LD] || 0,
+      L_S: latencies[Instructions.L_S] || 0,
+      L_D: latencies[Instructions.L_D] || 0,
+      SW: latencies[Instructions.SW] || 0,
+      SD: latencies[Instructions.SD] || 0,
+      S_S: latencies[Instructions.S_S] || 0,
+      S_D: latencies[Instructions.S_D] || 0,
+      BNE: latencies[Instructions.BNE] || 0,
+      BEQ: latencies[Instructions.BEQ] || 0,
     };
     onSave(formattedLatencies);
   };
@@ -76,7 +54,7 @@ const InstructionLatencies: React.FC<FileUploaderProps> = ({ onSave }) => {
     <div className="latency-container">
       <h1>Instruction Latencies</h1>
       <form>
-        {instructions.map((instr) => (
+        {Object.values(Instructions).map((instr) => (
           <div key={instr} className="input-group">
             <label htmlFor={instr}>{instr}</label>
             <input
