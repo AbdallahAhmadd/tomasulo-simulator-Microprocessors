@@ -1,28 +1,42 @@
 import {SystemConfig, SystemState} from './types';
-import {initializeAddStations, initializeLoadBuffer, initializeMulStations, initializeStoreBuffer} from "./helpers.ts";
+import {
+    initializeAddStations,
+    initializeLoadBuffer,
+    initializeMulStations, initializeRegisterFile,
+    initializeStoreBuffer,
+    parseInstructions
+} from "./helpers.ts";
+import { DMappedCache } from './hardwareComponents/Cache.ts'
+import { Memory } from "./hardwareComponents/Memory.ts";
 
-export function initializeSystem(instructionQueue: string, config: SystemConfig): SystemState {
+export function initializeSystem(instructionQueue: string[], config: SystemConfig): SystemState {
     const {  fpAddReservationStationsSize,
         fpMulReservationStationsSize,
         intAddReservationStationsSize,
         intMulReservationStationsSize,
+        fpRegisterFileSize,
+        intRegisterFileSize,
         loadBufferSize,
         storeBufferSize,
         cacheSize,
         blockSize,
         latencies} = config;
     return {
-        instructionQueue: ,// parse instruction Queue,
+        instructionQueue: parseInstructions(instructionQueue),
         fpAddReservationStations: initializeAddStations(fpAddReservationStationsSize),
         fpMulReservationStations: initializeMulStations(fpMulReservationStationsSize),
         intAddReservationStations:  initializeAddStations(intAddReservationStationsSize),
         intMulReservationStations: initializeMulStations(intMulReservationStationsSize),
         loadBuffer: initializeLoadBuffer(loadBufferSize),
         storeBuffer: initializeStoreBuffer(storeBufferSize),
-        registerFile: [], // populate register file with predefined values,
+        fpRegisterFile: initializeRegisterFile(fpRegisterFileSize,"F"),
+        intRegisterFile: initializeRegisterFile(intRegisterFileSize,"R"),
         latencies: latencies,
-        memory: [], //populate memory
-        clock: 0,
-        instructionResults: [],
+        memory: new Memory(1024),
+        cache: new DMappedCache(cacheSize, blockSize),
+        instructionTable:[],
+        clockCycle: 0,
+        pc:0,
+        notes:""
     };
 }

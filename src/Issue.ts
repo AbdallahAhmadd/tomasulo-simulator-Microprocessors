@@ -1,7 +1,12 @@
-
-import { SystemState  } from "./types";
+import {registerFileEntry, ReservationStation, SystemState} from "./types";
 import {Instructions} from "./enums";
-import { getRegisterTag , getRegisterValue , updateRegisterTag , mapOpcodeToLatencyKey } from "./helpers";
+import {
+  getRegisterTag,
+  getRegisterValue,
+  updateRegisterTag,
+  mapOpcodeToLatencyKey,
+  isRegisterAvailable
+} from "./helpers";
 
 
 //=================================================================================================================//
@@ -29,8 +34,23 @@ export function issueInstruction(systemState: SystemState): SystemState {
     const currentInstruction = instructionQueue[pc];
     const { opcode, rd, rs, rt } = currentInstruction;
     let issued = false;
-  
-    switch (opcode) {
+
+  function populateReservationEntry(availableSlot: ReservationStation, registerFile:  registerFileEntry[] ) {
+    availableSlot.busy = true;
+    availableSlot.op = opcode;
+    if (isRegisterAvailable(rs, fpRegisterFile))
+      availableSlot.vj = getRegisterValue(rs, fpRegisterFile);
+    if (isRegisterAvailable(rt, fpRegisterFile))
+      availableSlot.vk = getRegisterValue(rt, fpRegisterFile);
+    availableSlot.qj = getRegisterTag(rs, fpRegisterFile);
+    availableSlot.qk = getRegisterTag(rt, fpRegisterFile);
+    availableSlot.timeRemaining = latencies[mapOpcodeToLatencyKey(opcode)];
+    availableSlot.tag = `A${fpAddReservationStations.indexOf(availableSlot) + 1}`;
+
+    updateRegisterTag(rd, availableSlot.tag, registerFile);
+  }
+
+  switch (opcode) {
 
 
     //=================================================================================================================//
@@ -41,17 +61,7 @@ export function issueInstruction(systemState: SystemState): SystemState {
       case Instructions.SUB_D: {
         const availableSlot = fpAddReservationStations.find((rs) => !rs.busy);
         if (availableSlot) {
-          availableSlot.busy = true;
-          availableSlot.op = opcode;
-          availableSlot.vj = getRegisterValue(rs, fpRegisterFile);
-          availableSlot.vk = getRegisterValue(rt, fpRegisterFile);
-          availableSlot.qj = getRegisterTag(rs, fpRegisterFile);
-          availableSlot.qk = getRegisterTag(rt, fpRegisterFile);
-          availableSlot.timeRemaining = latencies[mapOpcodeToLatencyKey(opcode)];
-          availableSlot.tag = `A${fpAddReservationStations.indexOf(availableSlot) + 1}`;
-  
-          updateRegisterTag(rd, availableSlot.tag, fpRegisterFile);
-  
+          populateReservationEntry(availableSlot, fpRegisterFile);
           issued = true;
         }
         break;
@@ -65,17 +75,7 @@ export function issueInstruction(systemState: SystemState): SystemState {
       case Instructions.DIV_D: {
         const availableSlot = fpMulReservationStations.find((rs) => !rs.busy);
         if (availableSlot) {
-          availableSlot.busy = true;
-          availableSlot.op = opcode;
-          availableSlot.vj = getRegisterValue(rs, fpRegisterFile);
-          availableSlot.vk = getRegisterValue(rt, fpRegisterFile);
-          availableSlot.qj = getRegisterTag(rs, fpRegisterFile);
-          availableSlot.qk = getRegisterTag(rt, fpRegisterFile);
-          availableSlot.timeRemaining = latencies[mapOpcodeToLatencyKey(opcode)];
-          availableSlot.tag = `M${fpMulReservationStations.indexOf(availableSlot) + 1}`;
-  
-          updateRegisterTag(rd, availableSlot.tag, fpRegisterFile);
-  
+         populateReservationEntry(availableSlot, fpRegisterFile)
           issued = true;
         }
         break;
@@ -107,12 +107,12 @@ export function issueInstruction(systemState: SystemState): SystemState {
         const availableSlot = storeBuffer.find((sb) => !sb.busy);
         if (availableSlot) {
           availableSlot.busy = true;
-          availableSlot.address = parseInt(rs); 
-          availableSlot.v = getRegisterValue(rt, fpRegisterFile);
+          availableSlot.address = parseInt(rs);
+          if (isRegisterAvailable(rt,fpRegisterFile))
+            availableSlot.v = getRegisterValue(rt, fpRegisterFile);
           availableSlot.q = getRegisterTag(rt, fpRegisterFile);
           availableSlot.timeRemaining = latencies[mapOpcodeToLatencyKey(opcode)];
           availableSlot.tag = `S${storeBuffer.indexOf(availableSlot) + 1}`;
-  
           issued = true;
         }
         break;
@@ -131,7 +131,7 @@ export function issueInstruction(systemState: SystemState): SystemState {
       updatedInstructionTable.push({
         instruction: currentInstruction,
         issue: clockCycle,
-        execution_complete: `${clockCycle}...` ,
+        execution_complete: "" ,
         writeResult: -1,
       });
   
@@ -139,12 +139,11 @@ export function issueInstruction(systemState: SystemState): SystemState {
         ...systemState,
         instructionTable: updatedInstructionTable,
         pc: pc + 1,
-        clockCycle: clockCycle + 1, 
       };
     } 
     else {
       console.log("No available slot for instruction issue.");
-      return { ...systemState, clockCycle: clockCycle + 1 }; 
+      return { ...systemState };
     }
   }
   
