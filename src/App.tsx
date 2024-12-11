@@ -1,17 +1,17 @@
-import TextFileParser from "./components/InstructionParser.tsx";
 import React, {useState} from "react";
 import FileUploader from "./components/InstructionParser.tsx";
-import UserInput from './components/UserInput/UserInput'
-import CacheInput from './components/UserInput/cacheInput'
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import InstructionTable from "./components/InstructionsTable.tsx";
 function App() {
   const [instructionQueue, setInstructionQueue] = useState<string[]>([]);
-  const [loadSize, setLoadSize] = useState<number>(0);
-  const [storeSize, setStoreSize] = useState<number>(0);
-  const [addReservationStationsNums, setAddReservationStationsNums] = useState<number>(0);
-  const [mulReservationStationsNums, setMulReservationStationsNums] = useState<number>(0);
+  const [fpAddReservationStationsNums, setfpAddReservationStationsNums] = useState<number>(0);
+  const [fpMulReservationStationsNums, setfpMulReservationStationsNums] = useState<number>(0);
+  const [intAddReservationStationsNums, setIntAddReservationStationsNums]= useState()
+  const [intMulReservationStationsNums, setIntMulReservationStationsNums]= useState()
+  const [loadBufferSize, setLoadBufferSize] = useState<number>(0);
+  const [storeBufferSize, setStoreBufferSize] = useState<number>(0);
+  const [fpRegisterFileSize, setfpRegisterFileSize] = useState<number>(0);
+  const [intRegisterFileSize, setIntRegisterFileSize] = useState<number>(0);
   const [cacheSize, setCacheSize] = useState<number>(0);
   const [blockSize, setBlockSize] = useState<number>(0);
   const [latencies, setLatencies] = useState<number[]>([]);
@@ -38,11 +38,13 @@ function App() {
   };
   return (
       <>
+        <div>
         <FileUploader onChange={handleFileUpload} />
         {/*<ToastContainer />*/}
         {/*<UserInput></UserInput>*/}
         <InstructionTable />
         {/*<CacheInput/>*/}
+        </div>
     </>
   )
 }
