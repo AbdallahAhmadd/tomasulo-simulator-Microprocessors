@@ -9,6 +9,9 @@ import {
 } from "./helpers.ts";
 import { DMappedCache } from "./hardwareComponents/Cache.ts";
 import { Memory } from "./hardwareComponents/Memory.ts";
+import { issueInstruction } from "./Issue.ts";
+import { execute } from "./Execution.ts";
+import { writeBack } from "./WriteBack.ts";
 
 export function initializeSystem(instructionQueue: string[], config: SystemConfig): SystemState {
   const {
@@ -41,6 +44,23 @@ export function initializeSystem(instructionQueue: string[], config: SystemConfi
     instructionTable: [],
     clockCycle: 0,
     pc: 0,
-    notes: "",
+    notes: [],
   };
+}
+
+export function nextSystemState(systemState: SystemState): SystemState {
+  const newState = structuredClone(systemState);
+
+  newState.notes = [];
+  newState.clockCycle++;
+
+  issueInstruction(newState);
+
+  execute(newState);
+
+  writeBack(newState);
+
+  console.log(newState);
+
+  return newState;
 }

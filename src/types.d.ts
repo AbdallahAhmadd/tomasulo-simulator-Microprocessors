@@ -104,7 +104,7 @@ export interface SystemState {
   clockCycle: number;
   pc: number;
   latencies: latencies;
-  notes: string;
+  notes: string[];
 }
 
 export interface SystemConfig {
