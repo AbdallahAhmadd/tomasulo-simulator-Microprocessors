@@ -22,7 +22,7 @@ export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
       tag: string;
       busy: number;
       address: number;
-      timeRemaining: number;
+      timeRemaining?: number;
     }[]
   >([]);
   useEffect(() => {
