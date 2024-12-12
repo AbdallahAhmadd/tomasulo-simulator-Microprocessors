@@ -27,7 +27,7 @@ export function execute(newState: SystemState) {
   newState.fpAddReservationStations.forEach((station, index) => {
     if (station.busy && station.qj !== "0" && station.qk !== "0") {
       if (!station.timeRemaining) {
-        const latency = newState.latencies[mapOpToLatencyKey(station.op)];
+        const latency = newState.latencies[mapOpToLatencyKey(station.op as Instructions)];
         station.timeRemaining = latency;
         newState.instructionTable[station.instructionTableIndex!].start_execution =
           newState.clockCycle;
@@ -47,7 +47,7 @@ export function execute(newState: SystemState) {
   newState.fpMulReservationStations.forEach((station, index) => {
     if (station.busy && station.qj !== "0" && station.qk !== "0") {
       if (!station.timeRemaining) {
-        const latency = newState.latencies[mapOpToLatencyKey(station.op)];
+        const latency = newState.latencies[mapOpToLatencyKey(station.op as Instructions)];
         station.timeRemaining = latency;
         newState.instructionTable[station.instructionTableIndex!].start_execution =
           newState.clockCycle;
@@ -67,7 +67,7 @@ export function execute(newState: SystemState) {
   newState.intAddReservationStations.forEach((station, index) => {
     if (station.busy && station.qj !== "0" && station.qk !== "0") {
       if (!station.timeRemaining) {
-        const latency = newState.latencies[mapOpToLatencyKey(station.op)];
+        const latency = newState.latencies[mapOpToLatencyKey(station.op as Instructions)];
         station.timeRemaining = latency;
         newState.instructionTable[station.instructionTableIndex!].start_execution =
           newState.clockCycle;
@@ -91,7 +91,7 @@ export function execute(newState: SystemState) {
   newState.loadBuffer.forEach((buffer, index) => {
     if (buffer.busy) {
       if (!buffer.timeRemaining) {
-        const latency = newState.latencies[mapOpToLatencyKey(buffer.op)];
+        const latency = newState.latencies[mapOpToLatencyKey(buffer.op as Instructions)];
         buffer.timeRemaining = latency;
         newState.instructionTable[buffer.instructionTableIndex!].start_execution =
           newState.clockCycle;
@@ -140,7 +140,7 @@ export function execute(newState: SystemState) {
   newState.storeBuffer.forEach((buffer, index) => {
     if (buffer.busy && buffer.q === "0") {
       if (!buffer.timeRemaining) {
-        const latency = newState.latencies[mapOpToLatencyKey(buffer.op)];
+        const latency = newState.latencies[mapOpToLatencyKey(buffer.op as Instructions)];
         buffer.timeRemaining = latency;
         newState.instructionTable[buffer.instructionTableIndex!].start_execution =
           newState.clockCycle;
