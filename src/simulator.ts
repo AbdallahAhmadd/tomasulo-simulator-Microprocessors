@@ -6,12 +6,12 @@ import {
   initializeRegisterFile,
   initializeStoreBuffer,
   parseInstructions,
-} from "./helpers.ts";
-import { DMappedCache } from "./hardwareComponents/Cache.ts";
-import { Memory } from "./hardwareComponents/Memory.ts";
-import { issueInstruction } from "./Issue.ts";
-import { execute } from "./Execution.ts";
-import { writeBack } from "./WriteBack.ts";
+} from "./helpers";
+import { DMappedCache } from "./hardwareComponents/Cache";
+import { Memory } from "./hardwareComponents/Memory";
+import { issueInstruction } from "./Issue";
+import { execute } from "./Execution";
+import { writeBack } from "./WriteBack";
 
 export function initializeSystem(instructionQueue: string[], config: SystemConfig): SystemState {
   const {
