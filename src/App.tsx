@@ -3,7 +3,7 @@ import FileUploader from "./components/InstructionParser.tsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LatencyInput from "../src/components/UserInput/LatencyInput.tsx";
-import { latencies, SystemConfig } from "./types";
+import { latencies, SystemConfig, SystemState } from "./types";
 import CacheInput from "./components/UserInput/cacheInput.tsx";
 import FpReservationStationInput from "./components/UserInput/FpReservationStations.tsx";
 import IntReservationStationInput from "./components/UserInput/IntReservationStations.tsx";
@@ -80,6 +80,8 @@ function App() {
 
   const [showExecutionPage, setShowExecutionPage] = useState(false);
   const [SystemConfig, setSystemConfig] = useState<SystemConfig>();
+  const [reservationStation, setReservationStation] = useState<SystemState>();
+
   const handleExecution = () => {
     if (!latencies) {
       toast.error("Please provide latency values.");
@@ -100,28 +102,38 @@ function App() {
     };
     setSystemState(initializeSystem(instructionQueue, SystemConfig));
     console.log("SystemConfig:", SystemConfig);
-    console.log('instructionQueue:', instructionQueue);
+    console.log("instructionQueue:", instructionQueue);
+    setShowExecutionPage(true);
+    console.log("Execution started");
   };
 
   
 
   return (
-      <>
+    <>
+      {!showExecutionPage ? (
         <div>
-        <FileUploader onChange={handleFileUpload} />
-        <LatencyInput onSave={handleLatancySave} />
-        <CacheInput onSave={handleCacheSave} />
-        <FpReservationStationInput onSave={handleFpReservationStation} />
-        <IntReservationStationInput onSave={handleIntReservationStation} />
-        <BufferConfiguration onSave={handleBufferSaveConfiguration}/>;
-        <RegisterFileConfiguration onSave={handleRegisterSaveConfiguration}/>
-        <div className="buttondiv">
-        <button className="execution" onClick={handleExecution}>Start Execution</button>
+          <FileUploader onChange={handleFileUpload} />
+          <LatencyInput onSave={handleLatancySave} />
+          <CacheInput onSave={handleCacheSave} />
+          <FpReservationStationInput onSave={handleFpReservationStation} />
+          <IntReservationStationInput onSave={handleIntReservationStation} />
+          <BufferConfiguration onSave={handleBufferSaveConfiguration} />
+          <RegisterFileConfiguration onSave={handleRegisterSaveConfiguration} />
+          <div className="buttondiv">
+            <button className="execution" onClick={handleExecution}>
+              Start Execution
+            </button>
+          </div>
         </div>
+      ) : (
+        <>
+          <ReservationStation reservationstation={reservationStation?.fpAddReservationStations || []}  />
+         
+        </>
+      )}
 
-        </div>
-        <ToastContainer />
-
+      <ToastContainer />
     </>
   )
 }
