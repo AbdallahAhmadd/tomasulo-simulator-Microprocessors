@@ -50,8 +50,8 @@ export const initializeLoadBuffer = (size: number): LoadBuffer[] => {
   return Array.from({ length: size }, (_, i) => ({
     busy: false,
     tag: `L${i + 1}`,
+    op: "",
     address: 0,
-    timeRemaining: 0,
   }));
 };
 
@@ -59,10 +59,10 @@ export const initializeStoreBuffer = (size: number): StoreBuffer[] => {
   return Array.from({ length: size }, (_, i) => ({
     busy: false,
     tag: `S${i + 1}`,
+    op: "",
     v: 0,
     q: "",
     address: 0,
-    timeRemaining: 0,
   }));
 };
 
@@ -76,7 +76,6 @@ export const initializeAddStations = (size: number): ReservationStation[] => {
     qj: "0",
     qk: "0",
     A: 0,
-    timeRemaining: 0,
   }));
 };
 
@@ -90,7 +89,6 @@ export const initializeMulStations = (size: number): ReservationStation[] => {
     qj: "0",
     qk: "0",
     A: 0,
-    timeRemaining: 0,
   }));
 };
 
@@ -129,39 +127,8 @@ export function updateRegisterTag(
   }
 }
 
-export function mapOpcodeToLatencyKey(opcode: Instructions): keyof latencies {
-  switch (opcode) {
-    case Instructions.DADDI:
-      return "DADDI";
-    case Instructions.DSUBI:
-      return "DSUBI";
-    case Instructions.ADD_D:
-      return "ADD_D";
-    case Instructions.ADD_S:
-      return "ADD_S";
-    case Instructions.SUB_D:
-      return "SUB_D";
-    case Instructions.SUB_S:
-      return "SUB_S";
-    case Instructions.MUL_D:
-      return "MUL_D";
-    case Instructions.MUL_S:
-      return "MUL_S";
-    case Instructions.DIV_D:
-      return "DIV_D";
-    case Instructions.DIV_S:
-      return "DIV_S";
-    case Instructions.LW:
-      return "LW";
-    case Instructions.LD:
-      return "LD";
-    case Instructions.L_S:
-      return "L_S";
-    case Instructions.L_D:
-      return "L_D";
-    default:
-      throw new Error(`Unsupported opcode: ${opcode}`);
-  }
+export function mapOpToLatencyKey(op: Instructions): keyof latencies {
+  return op.replace(".", "_") as keyof latencies;
 }
 
 export function broadcastResult(value: number, tag: string, stations: ReservationStation[]): void {
