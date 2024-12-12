@@ -221,8 +221,6 @@ export function issueInstruction(systemState: SystemState): SystemState {
       updatedInstructionTable.push({
         instruction: currentInstruction,
         issue: clockCycle,
-        execution_complete: "" ,
-        writeResult: -1,
       });
   
       return {
