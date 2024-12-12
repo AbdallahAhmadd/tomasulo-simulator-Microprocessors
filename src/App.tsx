@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import FileUploader from "./components/InstructionParser.tsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,8 +9,8 @@ import FpReservationStationInput from "./components/UserInput/FpReservationStati
 import IntReservationStationInput from "./components/UserInput/IntReservationStations.tsx";
 import BufferConfiguration from "./components/UserInput/BufferConfiguration.tsx";
 import RegisterFileConfiguration from "./components/UserInput/RegisterFileConfiguration.tsx";
-import {initializeSystem} from "./simulator.ts";  
-import {ViewOutput} from "./components/viewOutput/viewOutput.tsx";
+import { initializeSystem, nextSystemState } from "./simulator.ts";
+import { ViewOutput } from "./components/viewOutput/viewOutput.tsx";
 
 function App() {
   const [instructionQueue, setInstructionQueue] = useState<string[]>([]);
@@ -25,12 +25,11 @@ function App() {
   const [cacheSize, setCacheSize] = useState<number>(0);
   const [blockSize, setBlockSize] = useState<number>(0);
   const [latencies, setLatencies] = useState<latencies>();
-  const [systemState, setSystemState] = useState<SystemState>(); 
+  const [systemState, setSystemState] = useState<SystemState>();
 
   const handleLatancySave = (updatedLatencies: latencies) => {
     console.log("Received latencies:", updatedLatencies);
     setLatencies(updatedLatencies);
-    
   };
   const handleCacheSave = (size: number, block: number) => {
     setCacheSize(size);
@@ -41,7 +40,7 @@ function App() {
     setfpAddReservationStationsNums(fpAdd);
     setfpMulReservationStationsNums(fpMul);
     console.log(`Reservation Station: ${fpAdd}, FpMul: ${fpMul}`);
-  }
+  };
   const handleIntReservationStation = (intAdd: number, intMul: number) => {
     setIntAddReservationStationsNums(intAdd);
     setIntMulReservationStationsNums(intMul);
@@ -51,13 +50,13 @@ function App() {
     setLoadBufferSize(load);
     setStoreBufferSize(store);
     console.log(`Load Buffer Size: ${load}, Store Buffer Size: ${store}`);
-  }
+  };
 
   const handleRegisterSaveConfiguration = (fpReg: number, intReg: number) => {
     setIntRegisterFileSize(intReg);
     setfpRegisterFileSize(fpReg);
     console.log(`Load Register File Size: ${intReg}, Store Register File Size: ${fpReg}`);
-  }
+  };
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -69,8 +68,8 @@ function App() {
       // Process the file contents
       const lines = fileContents.split(/\r?\n/); // Split into lines
       const cleanedInstructions = lines
-          .map((line) => line.replace(/,/g, '')) // Remove commas
-          .filter((line) => line.length > 0); // Filter out empty lines
+        .map((line) => line.replace(/,/g, "")) // Remove commas
+        .filter((line) => line.length > 0); // Filter out empty lines
 
       setInstructionQueue(cleanedInstructions);
     };
@@ -79,15 +78,13 @@ function App() {
   };
 
   const [showExecutionPage, setShowExecutionPage] = useState(false);
-  const [SystemConfig, setSystemConfig] = useState<SystemConfig>();
-  const [reservationStation, setReservationStation] = useState<SystemState>();
 
   const handleExecution = () => {
     if (!latencies) {
       toast.error("Please provide latency values.");
       return;
     }
-    const SystemConfig : SystemConfig = {
+    const SystemConfig: SystemConfig = {
       fpAddReservationStationsSize: fpAddReservationStationsNums,
       fpMulReservationStationsSize: fpMulReservationStationsNums,
       intAddReservationStationsSize: intAddReservationStationsNums,
@@ -98,16 +95,31 @@ function App() {
       storeBufferSize,
       cacheSize,
       blockSize,
-      latencies
+      latencies,
     };
     setSystemState(initializeSystem(instructionQueue, SystemConfig));
     console.log("SystemConfig:", SystemConfig);
     console.log("instructionQueue:", instructionQueue);
     setShowExecutionPage(true);
-    console.log("Execution started");
   };
+  function handleForwardClick() {
+    setSystemState((prevState) => {
+      if (!prevState) return prevState;
+      return {
+        ...prevState,
+        clockCycle: prevState.clockCycle + 1, // Increment clockCycle
+      };
+    });
 
-  
+    if (systemState) {
+      setSystemState(nextSystemState(systemState));
+    }
+    
+  }
+
+  useEffect(() => {
+    console.log("System State:", systemState);
+  }, [systemState]); 
 
   return (
     <>
@@ -127,14 +139,21 @@ function App() {
           </div>
         </div>
       ) : (
-        <>        
-          {systemState && <ViewOutput systemState={systemState} instructionQueue={instructionQueue} />}
+        <>
+          {systemState && (
+            <ViewOutput
+              systemState={systemState}
+              instructionQueue={instructionQueue}
+              clockCycle={systemState.clockCycle}
+              onForwardClick={handleForwardClick}
+            />
+          )}
         </>
       )}
 
       <ToastContainer />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
