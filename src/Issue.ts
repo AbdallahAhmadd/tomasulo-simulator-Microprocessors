@@ -1,11 +1,10 @@
-import { registerFileEntry, ReservationStation, SystemState,instructionEntry } from "./types";
+import { registerFileEntry, ReservationStation, SystemState } from "./types";
 import { Instructions } from "./enums";
 import {
   getRegisterTag,
   getRegisterValue,
   updateRegisterTag,
   isRegisterAvailable,
-  parseInstructions,
 } from "./helpers";
 
 //helper fn to check branch law issued aw kda
@@ -36,7 +35,6 @@ export function issueInstruction(systemState: SystemState): void {
     intRegisterFile,
     pc,
     clockCycle,
-    instructionTable,
   } = systemState;
 
 
@@ -46,11 +44,11 @@ export function issueInstruction(systemState: SystemState): void {
     console.log(
       "Branch instruction is being issued or executed. Stopping issue of new instructions.",
     );
-    return ;
+    return;
   }
   if (pc >= instructionQueue.length) {
     console.log("Issued All instructions");
-    return ;
+    return;
   }
 
   const currentInstruction = instructionQueue[pc];
@@ -229,10 +227,10 @@ export function issueInstruction(systemState: SystemState): void {
       instruction: currentInstruction,
       issue: clockCycle,
     });
-  
-    systemState.instructionTable= updatedInstructionTable;
+
+    systemState.instructionTable = updatedInstructionTable;
     systemState.pc++;
- 
+
   } else {
     console.log("No available slot for instruction issue.");
   }
