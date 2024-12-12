@@ -122,8 +122,9 @@ export interface SystemConfig {
 }
 
 export interface CacheBlock {
-  tag: number;
-  valid: boolean;
   dirty: boolean;
-  data: number[];
+  valid: boolean;
+  tag: string;
+  data: Uint8Array;
+  dataView: DataView;
 }

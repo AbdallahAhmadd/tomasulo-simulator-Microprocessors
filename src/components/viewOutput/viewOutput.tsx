@@ -67,10 +67,6 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
         <IntReservationStationView reservationstation={systemState.intAddReservationStations} />
       </div>
       <div className="section">
-        <h2>Integer Multiplication Reservation Stations:</h2>
-        <IntReservationStationView reservationstation={systemState.intMulReservationStations} />
-      </div>
-      <div className="section">
         <h2>Load Buffer:</h2>
         <LoadBufferView loadbuffer={systemState.loadBuffer} />
       </div>
@@ -80,7 +76,7 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
       </div>
       <div className="section">
         <h2>Cache:</h2>
-        <CacheView Cache={systemState.cache.block} />
+        <CacheView Cache={systemState.cache.getCache()} />
       </div>
       <div className="section">
         <h2>Memory:</h2>

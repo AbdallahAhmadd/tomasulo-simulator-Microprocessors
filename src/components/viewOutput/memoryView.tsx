@@ -31,7 +31,7 @@ export const MemoryView: React.FC<MemoryProps> = ({ memory }) => {
     for (let address = 0; address < memory["memory"].length; address++) {
       memoryRows.push({
         address,
-        value: memory["memory"][address],
+        value: memory["memory"][address].toString(2).padStart(8, "0"),
       });
     }
 
@@ -48,11 +48,7 @@ export const MemoryView: React.FC<MemoryProps> = ({ memory }) => {
         <TableHead>
           <TableRow>
             <TableCell>
-              <IconButton
-                aria-label="expand/collapse rows"
-                size="small"
-                onClick={toggleCollapse}
-              >
+              <IconButton aria-label="expand/collapse rows" size="small" onClick={toggleCollapse}>
                 {isCollapsed ? <KeyboardArrowDown /> : <KeyboardArrowUp />}
               </IconButton>
             </TableCell>

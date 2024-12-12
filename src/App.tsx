@@ -97,9 +97,10 @@ function App() {
       blockSize,
       latencies,
     };
-    setSystemState(initializeSystem(instructionQueue, SystemConfig));
+    const sysState = initializeSystem(instructionQueue, SystemConfig);
+    setSystemState(sysState);
     console.log("SystemConfig:", SystemConfig);
-    console.log("instructionQueue:", instructionQueue);
+    console.log("System State: ", sysState);
     setShowExecutionPage(true);
   };
   function handleForwardClick() {
@@ -114,12 +115,11 @@ function App() {
     if (systemState) {
       setSystemState(nextSystemState(systemState));
     }
-    
   }
 
   useEffect(() => {
     console.log("System State:", systemState);
-  }, [systemState]); 
+  }, [systemState]);
 
   return (
     <>
