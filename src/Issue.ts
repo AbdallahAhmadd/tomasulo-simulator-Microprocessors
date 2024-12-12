@@ -1,10 +1,11 @@
-import { registerFileEntry, ReservationStation, SystemState } from "./types";
+import { registerFileEntry, ReservationStation, SystemState,instructionEntry } from "./types";
 import { Instructions } from "./enums";
 import {
   getRegisterTag,
   getRegisterValue,
   updateRegisterTag,
   isRegisterAvailable,
+  parseInstructions,
 } from "./helpers";
 
 //helper fn to check branch law issued aw kda
@@ -23,7 +24,7 @@ function checkBranch(systemState: SystemState): boolean {
 //												ISSUING                                                            //
 //=================================================================================================================//
 
-export function issueInstruction(systemState: SystemState): SystemState {
+export function issueInstruction(systemState: SystemState): void {
   const {
     instructionQueue,
     fpAddReservationStations,
@@ -35,17 +36,21 @@ export function issueInstruction(systemState: SystemState): SystemState {
     intRegisterFile,
     pc,
     clockCycle,
+    instructionTable,
   } = systemState;
+
+
+
 
   if (checkBranch(systemState)) {
     console.log(
       "Branch instruction is being issued or executed. Stopping issue of new instructions.",
     );
-    return systemState;
+    return ;
   }
   if (pc >= instructionQueue.length) {
     console.log("Issued All instructions");
-    return systemState;
+    return ;
   }
 
   const currentInstruction = instructionQueue[pc];
@@ -217,21 +222,18 @@ export function issueInstruction(systemState: SystemState): SystemState {
   //=================================================================================================================//
   //												   UPDATING                                                           //
   //=================================================================================================================//
-
+  console.log(issued);
   if (issued) {
     const updatedInstructionTable = [...systemState.instructionTable];
     updatedInstructionTable.push({
       instruction: currentInstruction,
       issue: clockCycle,
     });
-
-    return {
-      ...systemState,
-      instructionTable: updatedInstructionTable,
-      pc: pc + 1,
-    };
+  
+    systemState.instructionTable= updatedInstructionTable;
+    systemState.pc++;
+ 
   } else {
     console.log("No available slot for instruction issue.");
-    return { ...systemState };
   }
 }
