@@ -128,7 +128,7 @@ function App() {
         </div>
       ) : (
         <>        
-          {systemState && <ViewOutput systemState={systemState} />}
+          {systemState && <ViewOutput systemState={systemState} instructionQueue={instructionQueue} />}
         </>
       )}
 
