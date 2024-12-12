@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LoadBuffer } from "../types";
+import { LoadBuffer } from "../../types";
 
 import {
   Table,

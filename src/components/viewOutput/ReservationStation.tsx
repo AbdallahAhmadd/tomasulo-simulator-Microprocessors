@@ -15,7 +15,7 @@ interface ReservationStationProps {
   reservationstation: ReservationStation[];
 }
 
-const ReservationStationView: React.FC<ReservationStationProps> = ({ reservationstation }) => {
+export const ReservationStationView: React.FC<ReservationStationProps> = ({ reservationstation }) => {
   const [rows, setRows] = useState<
     {
       tag: string;
@@ -104,4 +104,3 @@ const ReservationStationView: React.FC<ReservationStationProps> = ({ reservation
   );
 };
 
-export default ReservationStationView;
