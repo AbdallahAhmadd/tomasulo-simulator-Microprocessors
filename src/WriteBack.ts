@@ -45,6 +45,26 @@ export function writeBack(newState: SystemState) {
         register.Q = "0";
       }
     });
+    newState.fpAddReservationStations.forEach((station) => {
+      if (station.qj === newState.CDB.tag) {
+        station.qj = "0";
+        station.vj = newState.CDB.value;
+      }
+      if (station.qk === newState.CDB.tag) {
+        station.qk = "0";
+        station.vk = newState.CDB.value;
+      }
+    });
+    newState.fpMulReservationStations.forEach((station) => {
+      if (station.qj === newState.CDB.tag) {
+        station.qj = "0";
+        station.vj = newState.CDB.value;
+      }
+      if (station.qk === newState.CDB.tag) {
+        station.qk = "0";
+        station.vk = newState.CDB.value;
+      }
+    });
   }
 
   if (newState.CDB.tag.startsWith("R")) {
@@ -52,6 +72,16 @@ export function writeBack(newState: SystemState) {
       if (register.Q === newState.CDB.tag) {
         register.value = newState.CDB.value;
         register.Q = "0";
+      }
+    });
+    newState.intAddReservationStations.forEach((station) => {
+      if (station.qj === newState.CDB.tag) {
+        station.qj = "0";
+        station.vj = newState.CDB.value;
+      }
+      if (station.qk === newState.CDB.tag) {
+        station.qk = "0";
+        station.vk = newState.CDB.value;
       }
     });
   }
