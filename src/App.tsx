@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import FileUploader from "./components/InstructionParser.tsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,6 +12,60 @@ import BufferConfiguration from "./components/UserInput/BufferConfiguration.tsx"
 import RegisterFileConfiguration from "./components/UserInput/RegisterFileConfiguration.tsx";
 import { initializeSystem, nextSystemState } from "./simulator.ts";
 import { ViewOutput } from "./components/viewOutput/viewOutput.tsx";
+
+interface ConfigurationPageProps {
+  onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onLatancySave: (updatedLatencies: latencies) => void;
+  onCacheSave: (size: number, block: number) => void;
+  onFpReservationStation: (fpAdd: number, fpMul: number) => void;
+  onIntReservationStation: (intAdd: number, intMul: number) => void;
+  onBufferSaveConfiguration: (load: number, store: number) => void;
+  onRegisterSaveConfiguration: (fpReg: number, intReg: number) => void;
+  onStartExecution: () => void;
+}
+
+function ConfigurationPage({
+  onFileUpload,
+  onLatancySave,
+  onCacheSave,
+  onFpReservationStation,
+  onIntReservationStation,
+  onBufferSaveConfiguration,
+  onRegisterSaveConfiguration,
+  onStartExecution,
+}: ConfigurationPageProps) {
+  return (
+    <div>
+      <FileUploader onChange={onFileUpload} />
+      <LatencyInput onSave={onLatancySave} />
+      <CacheInput onSave={onCacheSave} />
+      <FpReservationStationInput onSave={onFpReservationStation} />
+      <IntReservationStationInput onSave={onIntReservationStation} />
+      <BufferConfiguration onSave={onBufferSaveConfiguration} />
+      <RegisterFileConfiguration onSave={onRegisterSaveConfiguration} />
+      <div className="buttondiv">
+        <button className="execution" onClick={onStartExecution}>
+          Start Execution
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ExecutionPage({ systemState, instructionQueue, onForwardClick }: { systemState: SystemState | undefined, instructionQueue: string[], onForwardClick: () => void }) {
+  return (
+    <div>
+      {systemState && (
+        <ViewOutput
+          systemState={systemState}
+          instructionQueue={instructionQueue}
+          clockCycle={systemState.clockCycle}
+          onForwardClick={onForwardClick}
+        />
+      )}
+    </div>
+  );
+}
 
 function App() {
   const [instructionQueue, setInstructionQueue] = useState<string[]>([]);
@@ -25,7 +80,13 @@ function App() {
   const [cacheSize, setCacheSize] = useState<number>(0);
   const [blockSize, setBlockSize] = useState<number>(0);
   const [latencies, setLatencies] = useState<latencies>();
-  const [systemState, setSystemState] = useState<SystemState>();
+  const [systemState, setSystemState] = useState<SystemState | undefined>(() => {
+    // Load `systemState` from localStorage on app start
+    const storedState = localStorage.getItem("systemState");
+    return storedState ? JSON.parse(storedState) : null;
+  });
+
+  const navigate = useNavigate();
 
   const handleLatancySave = (updatedLatencies: latencies) => {
     console.log("Received latencies:", updatedLatencies);
@@ -77,8 +138,6 @@ function App() {
     reader.readAsText(file);
   };
 
-  const [showExecutionPage, setShowExecutionPage] = useState(false);
-
   const handleExecution = () => {
     if (!latencies) {
       toast.error("Please provide latency values.");
@@ -99,23 +158,18 @@ function App() {
     };
     const sysState = initializeSystem(instructionQueue, SystemConfig);
     setSystemState(sysState);
-    console.log("SystemConfig:", SystemConfig);
-    console.log("System State: ", sysState);
-    setShowExecutionPage(true);
+    localStorage.setItem("systemState", JSON.stringify(sysState)); // Persist to localStorage
+    navigate("/execution");
   };
-  function handleForwardClick() {
+
+  const handleForwardClick = () => {
     setSystemState((prevState) => {
       if (!prevState) return prevState;
-      return {
-        ...prevState,
-        clockCycle: prevState.clockCycle + 1, // Increment clockCycle
-      };
+      const nextState = nextSystemState(prevState);
+      localStorage.setItem("systemState", JSON.stringify(nextState)); // Persist updated state
+      return nextState;
     });
-
-    if (systemState) {
-      setSystemState(nextSystemState(systemState));
-    }
-  }
+  };
 
   useEffect(() => {
     console.log("System State:", systemState);
@@ -123,34 +177,33 @@ function App() {
 
   return (
     <>
-      {!showExecutionPage ? (
-        <div>
-          <FileUploader onChange={handleFileUpload} />
-          <LatencyInput onSave={handleLatancySave} />
-          <CacheInput onSave={handleCacheSave} />
-          <FpReservationStationInput onSave={handleFpReservationStation} />
-          <IntReservationStationInput onSave={handleIntReservationStation} />
-          <BufferConfiguration onSave={handleBufferSaveConfiguration} />
-          <RegisterFileConfiguration onSave={handleRegisterSaveConfiguration} />
-          <div className="buttondiv">
-            <button className="execution" onClick={handleExecution}>
-              Start Execution
-            </button>
-          </div>
-        </div>
-      ) : (
-        <>
-          {systemState && (
-            <ViewOutput
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ConfigurationPage
+              onFileUpload={handleFileUpload}
+              onLatancySave={handleLatancySave}
+              onCacheSave={handleCacheSave}
+              onFpReservationStation={handleFpReservationStation}
+              onIntReservationStation={handleIntReservationStation}
+              onBufferSaveConfiguration={handleBufferSaveConfiguration}
+              onRegisterSaveConfiguration={handleRegisterSaveConfiguration}
+              onStartExecution={handleExecution}
+            />
+          }
+        />
+        <Route
+          path="/execution"
+          element={
+            <ExecutionPage
               systemState={systemState}
               instructionQueue={instructionQueue}
-              clockCycle={systemState.clockCycle}
               onForwardClick={handleForwardClick}
             />
-          )}
-        </>
-      )}
-
+          }
+        />
+      </Routes>
       <ToastContainer />
     </>
   );

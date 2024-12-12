@@ -74,13 +74,13 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
         <h2>Store Buffer:</h2>
         <StoreBufferView storebuffer={systemState.storeBuffer} />
       </div>
-      <div className="section">
+      {/* <div className="section">
         <h2>Cache:</h2>
         <CacheView
           Cache={systemState.cache.getCache()}
           blockSize={systemState.cache.getBlockSize()}
         />
-      </div>
+      </div> */}
       <div className="section">
         <h2>Memory:</h2>
         <MemoryView memory={systemState.memory} />
