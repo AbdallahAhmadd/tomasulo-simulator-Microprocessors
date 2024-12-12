@@ -38,14 +38,6 @@ export interface StoreBuffer {
   timeRemaining: number;
 }
 
-export interface intReservationStation {
-  tag: string;
-  busy: boolean;
-  value: number;
-  v: number;
-  q: string;
-  timeRemaining: number;
-}
 
 export interface registerFileEntry {
   registerName: string;
@@ -88,8 +80,8 @@ export interface SystemState {
   instructionQueue: instruction[];
   fpAddReservationStations: ReservationStation[];
   fpMulReservationStations: ReservationStation[];
-  intAddReservationStations: intReservationStation[];
-  intMulReservationStations: intReservationStation[];
+  intAddReservationStations: ReservationStation[];
+  intMulReservationStations: ReservationStation[];
   loadBuffer: LoadBuffer[];
   storeBuffer: StoreBuffer[];
   fpRegisterFile: registerFileEntry[];
