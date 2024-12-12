@@ -47,9 +47,10 @@ export interface registerFileEntry {
 
 export interface instructionEntry {
   instruction: instruction;
-  issue: number;
-  execution_complete: string;
-  writeResult: number;
+  issue?: number;
+  start_execution?: number;
+  end_execution?: number;
+  writeResult?: number;
 }
 
 export interface latencies {
