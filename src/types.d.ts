@@ -1,4 +1,4 @@
-import { DMappedCache } from "./hardwareComponents/Cache.ts";
+import { DMappedCache } from "./hardwareComponents/Cache";
 import { Memory } from "./hardwareComponents/Memory";
 import { Instructions } from "./enums.ts";
 export interface instruction {
@@ -18,26 +18,31 @@ export interface ReservationStation {
   qj: string;
   qk: string;
   A: number;
-  timeRemaining: number;
+  timeRemaining?: number;
   result?: number;
+  instructionTableIndex?: number;
 }
 
 export interface LoadBuffer {
   tag: string;
   busy: boolean;
+  op: string;
   address: number;
-  timeRemaining: number;
+  timeRemaining?: number;
+  result?: number;
+  instructionTableIndex?: number;
 }
 
 export interface StoreBuffer {
   tag: string;
   busy: boolean;
+  op: string;
   address: number;
   v: number;
   q: string;
-  timeRemaining: number;
+  timeRemaining?: number;
+  instructionTableIndex?: number;
 }
-
 export interface registerFileEntry {
   registerName: string;
   Q: string;
@@ -93,7 +98,7 @@ export interface SystemState {
   intRegisterFile: registerFileEntry[];
   CDB: commonDataBus;
   memory: Memory;
-  cache: Cache;
+  cache: DMappedCache;
   /* simulation state */
   instructionTable: instructionEntry[];
   clockCycle: number;
