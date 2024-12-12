@@ -214,4 +214,24 @@ li:active {
     font-weight: bold;
     color: #2d9cdb;
   }
+
+  /* App.css */
+.buttondiv {
+    display: flex;
+    justify-content: center; /* Center the button horizontally */
+    align-items: center;     /* Center the button vertically */
+    height: 100px;           /* Full height of the viewport */
+  }
+  
+  .execution {
+    margin-top: 0px;
+    color: white;               /* White text */
+    padding: 20px 40px;         /* Larger padding for a bigger button */
+    border: none;               /* No border */
+    border-radius: 8px;         /* Rounded corners */
+    cursor: pointer;           /* Pointer cursor on hover */
+    font-size: 20px;            /* Larger text */
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
+    width: 250px;               /* Set a specific width */
+  }
   

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Cache} from '../../hardwareComponents/Cache'; // Import the Cache class
+import {DMappedCache} from '../../hardwareComponents/Cache'; // Import the Cache class
 import './UserInput.css'
 import { toast } from 'react-toastify';
 
