@@ -1,26 +1,32 @@
-import React from 'react';
-import { SystemState } from '../../types';
-import { ReservationStationView } from './ReservationStation';
-import { InstructionTable } from './InstructionsTable';
-import { IntReservationStationView } from './IntReservationStationView';
-import { LoadBufferView } from './LoadBufferView';
-import { StoreBufferView } from './StoreBufferView';
-import CacheView from './CacheView';
-import { RegisterFile } from './RegFile';
-import { MemoryView } from './memoryView';
+import React from "react";
+import { SystemState } from "../../types";
+import { ReservationStationView } from "./ReservationStation";
+import { InstructionTable } from "./InstructionsTable";
+import { IntReservationStationView } from "./IntReservationStationView";
+import { LoadBufferView } from "./LoadBufferView";
+import { StoreBufferView } from "./StoreBufferView";
+import CacheView from "./CacheView";
+import { RegisterFile } from "./RegFile";
+import { MemoryView } from "./memoryView";
+import InstructionQueue from "./InstructionQueue";
 
 interface viewOutputProps {
   systemState: SystemState;
+  instructionQueue?: string[];
 }
 
-export const ViewOutput: React.FC<viewOutputProps> = ({ systemState }) => {
+export const ViewOutput: React.FC<viewOutputProps> = ({ systemState, instructionQueue = [] }) => {
   return (
     <div className="view-output">
       <div className="cycle-info">
         <h1>Cycle: {systemState.clockCycle}</h1>
       </div>
       <div className="section">
-        <h2>Instructions:</h2>  
+        <h2>Instruction Queue:</h2>
+        <InstructionQueue instructionQueue={instructionQueue} />
+      </div>
+      <div className="section">
+        <h2>Instruction Table:</h2>
         <InstructionTable instructions={systemState.instructionTable} />
       </div>
       <div className="section">
@@ -52,7 +58,7 @@ export const ViewOutput: React.FC<viewOutputProps> = ({ systemState }) => {
         <CacheView Cache={systemState.cache.block} />
       </div>
       <div className="section">
-        <h2>Memory:</h2> 
+        <h2>Memory:</h2>
         <MemoryView memory={systemState.memory} />
       </div>
       <div className="section">
@@ -60,7 +66,7 @@ export const ViewOutput: React.FC<viewOutputProps> = ({ systemState }) => {
         <RegisterFile registerFile={systemState.fpRegisterFile} />
       </div>
       <div className="section">
-        <h2>Integer Register File:</h2>  
+        <h2>Integer Register File:</h2>
         <RegisterFile registerFile={systemState.intRegisterFile} />
       </div>
       <div className="notes">
