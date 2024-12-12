@@ -8,38 +8,35 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
 } from "@mui/material";
 
 interface LoadBufferProps {
-    loadbuffer: LoadBuffer[];
-  
+  loadbuffer: LoadBuffer[];
 }
-
 
 export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
   const [rows, setRows] = useState<
     {
-        tag: string;
-        busy: boolean;
-        address: number;
-        timeRemaining: number;
+      opcode: string;
+      tag: string;
+      busy: number;
+      address: number;
+      timeRemaining: number;
     }[]
   >([]);
   useEffect(() => {
     if (loadbuffer) {
       const formattedRows = loadbuffer.map((buffer: LoadBuffer) => ({
-            tag: buffer.tag,
-            busy: buffer.busy,
-            address: buffer.address,
-            timeRemaining: buffer.timeRemaining,
-  
-        }));
-        setRows(formattedRows);
+        opcode: buffer.op,
+        tag: buffer.tag,
+        busy: buffer.busy ? 1 : 0,
+        address: buffer.address,
+        timeRemaining: buffer.timeRemaining,
+      }));
+      setRows(formattedRows);
     }
-}, [loadbuffer]);
-  
-  
+  }, [loadbuffer]);
 
   return (
     <div>
@@ -48,28 +45,19 @@ export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
         <Table sx={{ minWidth: 650 }} aria-label="Dynamic Table">
           <TableHead>
             <TableRow>
-            <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Tag
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Opcode
+              </TableCell>
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Busy
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Address
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Time Remaining
               </TableCell>
             </TableRow>
@@ -79,6 +67,7 @@ export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
               <TableRow key={index}>
                 <TableCell align="center">{row.tag}</TableCell>
                 <TableCell align="center">{row.busy}</TableCell>
+                <TableCell align="center">{row.opcode}</TableCell>
                 <TableCell align="center">{row.address}</TableCell>
                 <TableCell align="center">{row.timeRemaining}</TableCell>
               </TableRow>
@@ -88,4 +77,4 @@ export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
       </TableContainer>
     </div>
   );
-}
+};

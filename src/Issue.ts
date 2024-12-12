@@ -37,9 +37,6 @@ export function issueInstruction(systemState: SystemState): void {
     clockCycle,
   } = systemState;
 
-
-
-
   if (checkBranch(systemState)) {
     console.log(
       "Branch instruction is being issued or executed. Stopping issue of new instructions.",
@@ -183,6 +180,7 @@ export function issueInstruction(systemState: SystemState): void {
       const availableSlot = loadBuffer.find((lb) => !lb.busy);
       if (availableSlot) {
         availableSlot.busy = true;
+        availableSlot.op = opcode;
         availableSlot.address = parseInt(rs); //beetgeb el offset bas
         availableSlot.tag = `L${loadBuffer.indexOf(availableSlot) + 1}`;
         updateRegisterTag(rd, availableSlot.tag, fpRegisterFile);
@@ -230,7 +228,6 @@ export function issueInstruction(systemState: SystemState): void {
 
     systemState.instructionTable = updatedInstructionTable;
     systemState.pc++;
-
   } else {
     console.log("No available slot for instruction issue.");
   }

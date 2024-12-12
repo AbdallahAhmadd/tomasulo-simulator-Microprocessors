@@ -5,16 +5,16 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
 } from "@mui/material";
-import {instructionEntry } from "../../types";
+import { instructionEntry } from "../../types";
 import { useEffect, useState } from "react";
 
-
-interface InstructionTableProps{
+interface InstructionTableProps {
   instructions: instructionEntry[];
+  clockCycle: number;
 }
-export const InstructionTable: React.FC<InstructionTableProps> = ({ instructions }) => {
+export const InstructionTable: React.FC<InstructionTableProps> = ({ instructions, clockCycle }) => {
   const [rows, setRows] = useState<
     {
       opcode: string;
@@ -22,7 +22,8 @@ export const InstructionTable: React.FC<InstructionTableProps> = ({ instructions
       j: string;
       k: string;
       issue?: number;
-      exec?: string;
+      start_execution?: number;
+      end_execution?: number;
       write?: number;
     }[]
   >([]);
@@ -41,19 +42,19 @@ export const InstructionTable: React.FC<InstructionTableProps> = ({ instructions
           case "L.S":
           case "L.D":
             j = inst.instruction.rs;
-            k = inst.instruction.labelAddress || "0"; 
+            k = inst.instruction.labelAddress || "0";
             break;
           case "SW":
           case "SD":
           case "S.S":
           case "S.D":
-            j = inst.instruction.rs; 
-            k = inst.instruction.labelAddress || "0"; 
+            j = inst.instruction.rs;
+            k = inst.instruction.labelAddress || "0";
             break;
           case "DADDI":
           case "DSUBI":
             j = inst.instruction.rs; // Source register
-            k = inst.instruction.labelAddress || "Immediate"; 
+            k = inst.instruction.labelAddress || "Immediate";
             break;
           case "ADD.D":
           case "ADD.S":
@@ -68,8 +69,8 @@ export const InstructionTable: React.FC<InstructionTableProps> = ({ instructions
             break;
           case "BNE":
           case "BEQ":
-            j = inst.instruction.rs; 
-            k = inst.instruction.rt; 
+            j = inst.instruction.rs;
+            k = inst.instruction.rt;
             break;
           default:
             break;
@@ -80,9 +81,10 @@ export const InstructionTable: React.FC<InstructionTableProps> = ({ instructions
           rd: inst.instruction.rd,
           j,
           k,
-          issue: inst.issue, 
-          exec: inst.execution_complete, 
-          write: inst.writeResult, 
+          issue: inst.issue,
+          start_execution: inst.start_execution,
+          end_execution: inst.end_execution,
+          write: inst.writeResult,
         };
       });
 
@@ -165,62 +167,46 @@ export const InstructionTable: React.FC<InstructionTableProps> = ({ instructions
           </TableRow>
           {/* Second row with sub-headers */}
           <TableRow>
-            <TableCell
-              align="center"
-              sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}
-            >
+            <TableCell align="center" sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}>
               Instruction
             </TableCell>
-            <TableCell
-              align="center"
-              sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}
-            >
+            <TableCell align="center" sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}>
               i
             </TableCell>
-            <TableCell
-              align="center"
-              sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}
-            >
+            <TableCell align="center" sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}>
               j
             </TableCell>
-            <TableCell
-              align="center"
-              sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}
-            >
+            <TableCell align="center" sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}>
               k
             </TableCell>
-            <TableCell
-              align="center"
-              sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}
-            >
+            <TableCell align="center" sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}>
               Issue
             </TableCell>
-            <TableCell
-              align="center"
-              sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}
-            >
+            <TableCell align="center" sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}>
               Execution Complete
             </TableCell>
-            <TableCell
-              align="center"
-              sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}
-            >
+            <TableCell align="center" sx={{ backgroundColor: "#ccc", fontWeight: "bold" }}>
               Write Result
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell align="center">{row.opcode}</TableCell>
-              <TableCell align="center">{row.rd}</TableCell>
-              <TableCell align="center">{row.j}</TableCell>
-              <TableCell align="center">{row.k}</TableCell>
-              <TableCell align="center">{row.issue}</TableCell>
-              <TableCell align="center">{row.exec}</TableCell>
-              <TableCell align="center">{row.write}</TableCell>
-            </TableRow>
-          ))}
+          {rows.map((row, index) => {
+            let formattedExecution = row.start_execution ? row.start_execution + "..." : "";
+            formattedExecution +=
+              row.end_execution && clockCycle >= row.end_execution ? row.end_execution : "";
+            return (
+              <TableRow key={index}>
+                <TableCell align="center">{row.opcode}</TableCell>
+                <TableCell align="center">{row.rd}</TableCell>
+                <TableCell align="center">{row.j}</TableCell>
+                <TableCell align="center">{row.k}</TableCell>
+                <TableCell align="center">{row.issue}</TableCell>
+                <TableCell align="center">{formattedExecution}</TableCell>
+                <TableCell align="center">{row.write}</TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </TableContainer>

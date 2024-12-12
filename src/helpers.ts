@@ -26,8 +26,14 @@ export const parseInstructions = (StringInstructions: string[]) => {
 
     const [opcode, rd, rs, rt] = instruction.split(" ");
 
-    if (opcode === 'BNE' || opcode === 'BEQ') {
-      parsedInstructions.push({ opcode: opcode as Instructions, rd: rt, rs: rd , rt: rs, labelAddress });
+    if (opcode === "BNE" || opcode === "BEQ") {
+      parsedInstructions.push({
+        opcode: opcode as Instructions,
+        rd: rt,
+        rs: rd,
+        rt: rs,
+        labelAddress,
+      });
     } else {
       parsedInstructions.push({ opcode: opcode as Instructions, rd, rs, rt, labelAddress });
     }
@@ -36,8 +42,10 @@ export const parseInstructions = (StringInstructions: string[]) => {
 
   //replace labelAddress with actual address
   parsedInstructions.forEach((instruction, index) => {
-    if ((instruction.opcode === 'BNE' || instruction.opcode === "BEQ") && instruction.rd) {
-      const labelInstructionIndex = parsedInstructions.findIndex((instr) => instr.labelAddress === instruction.rd);
+    if ((instruction.opcode === "BNE" || instruction.opcode === "BEQ") && instruction.rd) {
+      const labelInstructionIndex = parsedInstructions.findIndex(
+        (instr) => instr.labelAddress === instruction.rd,
+      );
       if (labelInstructionIndex !== -1) {
         instruction.rd = labelInstructionIndex.toString();
       }
@@ -82,7 +90,7 @@ export const initializeAddStations = (size: number): ReservationStation[] => {
 export const initializeMulStations = (size: number): ReservationStation[] => {
   return Array.from({ length: size }, (_, i) => ({
     busy: false,
-    tag: `<${i + 1}`,
+    tag: `M${i + 1}`,
     op: "",
     vj: 0,
     vk: 0,

@@ -8,42 +8,37 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
 } from "@mui/material";
 
 interface StoreBufferprops {
-    storebuffer: StoreBuffer[];
-  
+  storebuffer: StoreBuffer[];
 }
-
 
 export const StoreBufferView: React.FC<StoreBufferprops> = ({ storebuffer }) => {
   const [rows, setRows] = useState<
     {
-        tag: string;
-        busy: boolean;
-        address: number;
-        v: number;
-        q: string;
-        timeRemaining: number;
+      tag: string;
+      busy: number;
+      address: number;
+      v: number;
+      q: string;
+      timeRemaining: number;
     }[]
   >([]);
   useEffect(() => {
     if (storebuffer) {
       const formattedRows = storebuffer.map((buffer: StoreBuffer) => ({
-            tag: buffer.tag,
-            busy: buffer.busy,
-            address: buffer.address,
-            v: buffer.v,
-            q: buffer.q,
-            timeRemaining: buffer.timeRemaining,
-  
-        }));
-        setRows(formattedRows);
+        tag: buffer.tag,
+        busy: buffer.busy ? 1 : 0,
+        address: buffer.address,
+        v: buffer.v,
+        q: buffer.q,
+        timeRemaining: buffer.timeRemaining,
+      }));
+      setRows(formattedRows);
     }
-}, [storebuffer]);
-  
-  
+  }, [storebuffer]);
 
   return (
     <div>
@@ -52,40 +47,22 @@ export const StoreBufferView: React.FC<StoreBufferprops> = ({ storebuffer }) => 
         <Table sx={{ minWidth: 650 }} aria-label="Dynamic Table">
           <TableHead>
             <TableRow>
-            <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Tag
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Busy
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Address
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 V
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Q
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Time Remaining
               </TableCell>
             </TableRow>
@@ -106,4 +83,4 @@ export const StoreBufferView: React.FC<StoreBufferprops> = ({ storebuffer }) => 
       </TableContainer>
     </div>
   );
-}
+};

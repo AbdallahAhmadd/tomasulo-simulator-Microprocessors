@@ -1,3 +1,4 @@
+import { InstructionTable } from "./components/viewOutput/InstructionsTable";
 import { Instructions } from "./enums";
 import { mapOpToLatencyKey } from "./helpers";
 import { SystemState } from "./types";
@@ -26,6 +27,8 @@ export function AluOperation(value1: number, value2: number, operation: string):
 export function execute(newState: SystemState) {
   newState.fpAddReservationStations.forEach((station, index) => {
     if (station.busy && station.qj !== "0" && station.qk !== "0") {
+      if (newState.instructionTable[station.instructionTableIndex!].issue == newState.clockCycle)
+        return;
       if (!station.timeRemaining) {
         const latency = newState.latencies[mapOpToLatencyKey(station.op as Instructions)];
         station.timeRemaining = latency;
@@ -46,6 +49,8 @@ export function execute(newState: SystemState) {
 
   newState.fpMulReservationStations.forEach((station, index) => {
     if (station.busy && station.qj !== "0" && station.qk !== "0") {
+      if (newState.instructionTable[station.instructionTableIndex!].issue == newState.clockCycle)
+        return;
       if (!station.timeRemaining) {
         const latency = newState.latencies[mapOpToLatencyKey(station.op as Instructions)];
         station.timeRemaining = latency;
@@ -66,6 +71,8 @@ export function execute(newState: SystemState) {
 
   newState.intAddReservationStations.forEach((station, index) => {
     if (station.busy && station.qj !== "0" && station.qk !== "0") {
+      if (newState.instructionTable[station.instructionTableIndex!].issue == newState.clockCycle)
+        return;
       if (!station.timeRemaining) {
         const latency = newState.latencies[mapOpToLatencyKey(station.op as Instructions)];
         station.timeRemaining = latency;
@@ -91,6 +98,8 @@ export function execute(newState: SystemState) {
   newState.loadBuffer.forEach((buffer, index) => {
     if (buffer.busy) {
       if (!buffer.timeRemaining) {
+        if (newState.instructionTable[buffer.instructionTableIndex!].issue == newState.clockCycle)
+          return;
         const latency = newState.latencies[mapOpToLatencyKey(buffer.op as Instructions)];
         buffer.timeRemaining = latency;
         newState.instructionTable[buffer.instructionTableIndex!].start_execution =
@@ -102,28 +111,28 @@ export function execute(newState: SystemState) {
         switch (buffer.op) {
           case Instructions.LW:
             try {
-              buffer.result = newState.cache.read(buffer.address, 4, newState.memory);
+              buffer.result = newState.cache.read(buffer.address, 4, newState.memory, false);
             } catch (error) {
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
             break;
           case Instructions.LD:
             try {
-              buffer.result = newState.cache.read(buffer.address, 8, newState.memory);
+              buffer.result = newState.cache.read(buffer.address, 8, newState.memory, false);
             } catch (error) {
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
             break;
           case Instructions.L_S:
             try {
-              buffer.result = newState.cache.read(buffer.address, 4, newState.memory);
+              buffer.result = newState.cache.read(buffer.address, 4, newState.memory, true);
             } catch (error) {
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
             break;
           case Instructions.L_D:
             try {
-              buffer.result = newState.cache.read(buffer.address, 8, newState.memory);
+              buffer.result = newState.cache.read(buffer.address, 8, newState.memory, true);
             } catch (error) {
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -140,6 +149,8 @@ export function execute(newState: SystemState) {
   newState.storeBuffer.forEach((buffer, index) => {
     if (buffer.busy && buffer.q === "0") {
       if (!buffer.timeRemaining) {
+        if (newState.instructionTable[buffer.instructionTableIndex!].issue == newState.clockCycle)
+          return;
         const latency = newState.latencies[mapOpToLatencyKey(buffer.op as Instructions)];
         buffer.timeRemaining = latency;
         newState.instructionTable[buffer.instructionTableIndex!].start_execution =
@@ -150,16 +161,16 @@ export function execute(newState: SystemState) {
       if (buffer.timeRemaining === 0) {
         switch (buffer.op) {
           case Instructions.SW:
-            newState.cache.write(buffer.address, buffer.v, 4);
+            newState.cache.write(buffer.address, buffer.v, 4, false);
             break;
           case Instructions.SD:
-            newState.cache.write(buffer.address, buffer.v, 8);
+            newState.cache.write(buffer.address, buffer.v, 8, false);
             break;
           case Instructions.S_S:
-            newState.cache.write(buffer.address, buffer.v, 4);
+            newState.cache.write(buffer.address, buffer.v, 4, true);
             break;
           case Instructions.S_D:
-            newState.cache.write(buffer.address, buffer.v, 8);
+            newState.cache.write(buffer.address, buffer.v, 8, true);
             break;
           default:
             throw new Error(`Unsupported operation: ${buffer.op}`);

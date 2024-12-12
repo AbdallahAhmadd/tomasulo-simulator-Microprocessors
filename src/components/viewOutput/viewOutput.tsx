@@ -25,6 +25,7 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
   onForwardClick,
   clockCycle,
 }) => {
+  console.log(systemState);
   return (
     <div className="view-output">
       <h3>Clock Cycle</h3>
@@ -52,7 +53,10 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
       </div>
       <div className="section">
         <h2>Instruction Table:</h2>
-        <InstructionTable instructions={systemState.instructionTable} />
+        <InstructionTable
+          instructions={systemState.instructionTable}
+          clkCycle={systemState.clockCycle}
+        />
       </div>
       <div className="section">
         <h2>Floating Point Addition Reservation Stations:</h2>
@@ -76,10 +80,10 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
       </div>
       <div className="section">
         <h2>Cache:</h2>
-        <CacheView
+        {/* <CacheView
           Cache={systemState.cache.getCache()}
           blockSize={systemState.cache.getBlockSize()}
-        />
+        /> */}
       </div>
       <div className="section">
         <h2>Memory:</h2>
