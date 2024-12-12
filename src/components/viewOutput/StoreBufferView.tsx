@@ -23,7 +23,7 @@ export const StoreBufferView: React.FC<StoreBufferprops> = ({ storebuffer }) => 
       address: number;
       v: number;
       q: string;
-      timeRemaining: number;
+      timeRemaining?: number;
     }[]
   >([]);
   useEffect(() => {

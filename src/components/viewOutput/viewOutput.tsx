@@ -55,7 +55,7 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
         <h2>Instruction Table:</h2>
         <InstructionTable
           instructions={systemState.instructionTable}
-          clkCycle={systemState.clockCycle}
+          clockCycle={systemState.clockCycle}
         />
       </div>
       <div className="section">

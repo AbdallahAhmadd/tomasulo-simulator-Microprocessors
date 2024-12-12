@@ -28,7 +28,7 @@ export const ReservationStationView: React.FC<ReservationStationProps> = ({
       qj: string;
       qk: string;
       a: number;
-      timeRemaining: number;
+      timeRemaining?: number;
     }[]
   >([]);
 
