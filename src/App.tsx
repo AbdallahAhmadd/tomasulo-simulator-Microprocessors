@@ -10,7 +10,7 @@ import IntReservationStationInput from "./components/UserInput/IntReservationSta
 import BufferConfiguration from "./components/UserInput/BufferConfiguration.tsx";
 import RegisterFileConfiguration from "./components/UserInput/RegisterFileConfiguration.tsx";
 import {initializeSystem} from "./simulator.ts";  
-import ViewOutput from "./components/viewOutput/viewOutput.tsx";
+import {ViewOutput} from "./components/viewOutput/viewOutput.tsx";
 
 function App() {
   const [instructionQueue, setInstructionQueue] = useState<string[]>([]);
@@ -128,7 +128,7 @@ function App() {
         </div>
       ) : (
         <>        
-        {/* <ViewOutput systemState = {systemState} /> */}
+          {systemState && <ViewOutput systemState={systemState} />}
         </>
       )}
 

@@ -235,3 +235,52 @@ li:active {
     width: 250px;               /* Set a specific width */
   }
   
+/* ViewOutput.css */
+
+.view-output {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: #333;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cycle-info {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .cycle-info h1 {
+    font-size: 2em;
+    color: #007bff;
+    margin: 0;
+  }
+  
+  .section {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #555;
+  }
+  
+  .notes {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fffae6;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .notes h2 {
+    font-size: 1.2em;
+    color: #856404;
+  }
+  
