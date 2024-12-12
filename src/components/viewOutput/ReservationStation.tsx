@@ -9,16 +9,13 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TextField,
-  Button,
 } from "@mui/material";
 
 interface ReservationStationProps {
   reservationstation: ReservationStation[];
 }
 
-
-export const ReservationStationView: React.FC<ReservationStationProps> = ({ reservationstation }) => {
+const ReservationStationView: React.FC<ReservationStationProps> = ({ reservationstation }) => {
   const [rows, setRows] = useState<
     {
       tag: string;
@@ -32,86 +29,56 @@ export const ReservationStationView: React.FC<ReservationStationProps> = ({ rese
       timeRemaining: number;
     }[]
   >([]);
-  
+
   useEffect(() => {
     if (reservationstation) {
-      const formattedRows = reservationstation.map((station: ReservationStation) => ({
+      const formattedRows = reservationstation.map((station) => ({
         tag: station.tag,
-        busy: station.busy ? "1 " : "0",
-            op: station.op,
-            vj: station.vj, 
-            vk: station.vk,
-            qj: station.qj,
-            qk: station.qk,
-            a: station.A, 
-            timeRemaining: station.timeRemaining,
-        }));
-        setRows(formattedRows);
+        busy: station.busy ? "1" : "0",
+        op: station.op,
+        vj: station.vj,
+        vk: station.vk,
+        qj: station.qj,
+        qk: station.qk,
+        a: station.A,
+        timeRemaining: station.timeRemaining,
+      }));
+      setRows(formattedRows);
     }
-}, [reservationstation]);
-
+  }, [reservationstation]);
 
   return (
     <div>
-
-
       {/* Table */}
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="Dynamic Table">
+        <Table sx={{ minWidth: 650 }} aria-label="Reservation Stations">
           <TableHead>
             <TableRow>
-            <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
-                time remaining
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Time Remaining
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
-                tag
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Tag
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
-                busy
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Busy
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
-                op
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Op
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
-                vi
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Vj
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Vk
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
-                Qi
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Qj
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Qk
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 A
               </TableCell>
             </TableRow>
@@ -135,4 +102,6 @@ export const ReservationStationView: React.FC<ReservationStationProps> = ({ rese
       </TableContainer>
     </div>
   );
-}
+};
+
+export default ReservationStationView;
