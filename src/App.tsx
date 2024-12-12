@@ -77,6 +77,9 @@ function App() {
 
     reader.readAsText(file);
   };
+
+  const [showExecutionPage, setShowExecutionPage] = useState(false);
+  const [SystemConfig, setSystemConfig] = useState<SystemConfig>();
   const handleExecution = () => {
     if (!latencies) {
       toast.error("Please provide latency values.");
