@@ -3,7 +3,7 @@ interface block {
   dirty: boolean;
   valid: boolean;
   tag: string;
-  data: string[];
+  data: Uint8Array;
 }
 
 export class DMappedCache {
@@ -26,7 +26,7 @@ export class DMappedCache {
       dirty: false,
       valid: false,
       tag: "",
-      data: new Array(blockSize).fill("00000000"),
+      data: new Uint8Array(blockSize),
     }));
   }
 
@@ -48,12 +48,7 @@ export class DMappedCache {
 
     const binaryAddress = address.toString(2).padStart(10, "0");
 
-    const offsetBits = Math.log2(this.blockSize);
-    const indexBits = Math.log2(Math.floor(this.cacheSize / this.blockSize));
-    const tagBits = 10 - offsetBits - indexBits;
-    const tag = binaryAddress.slice(0, tagBits);
-    const index = binaryAddress.slice(tagBits, tagBits + indexBits);
-    const offset = binaryAddress.slice(tagBits + indexBits);
+    const { index, tag, offset } = this.decodeCacheAddress(binaryAddress);
 
     const decimalIndex = parseInt(index, 2);
     const block = this.cache[decimalIndex];
@@ -62,17 +57,25 @@ export class DMappedCache {
       const decimalOffset = parseInt(offset, 2);
       const readBytes = block.data.slice(decimalOffset, decimalOffset + bytesNumber);
 
-      const binaryValue = readBytes.join("");
-      return parseInt(binaryValue, 2);
+      return readBytes.reduce((acc, byte, idx) => acc + (byte << (8 * (bytesNumber - idx - 1))), 0);
     } else {
       for (let i = 0; i < this.blockSize; i++) {
-        block.data[i] = memory
-          .read(address + i, 1)
-          .toString(2)
-          .padStart(8, "0");
+        block.data[i] = memory.read(address + i, 1);
       }
+      block.tag = tag;
+      block.valid = true;
       throw new Error(`Cache miss for address: ${address}.`);
     }
+  }
+
+  private decodeCacheAddress(binaryAddress: string) {
+    const offsetBits = Math.log2(this.blockSize);
+    const indexBits = Math.log2(Math.floor(this.cacheSize / this.blockSize));
+    const tagBits = 10 - offsetBits - indexBits;
+    const tag = binaryAddress.slice(0, tagBits);
+    const index = binaryAddress.slice(tagBits, tagBits + indexBits);
+    const offset = binaryAddress.slice(tagBits + indexBits);
+    return { index, tag, offset };
   }
 
   public write(address: number, data: number, bytesNumber: number): void {
@@ -93,12 +96,7 @@ export class DMappedCache {
 
     const binaryAddress = address.toString(2).padStart(10, "0");
 
-    const offsetBits = Math.log2(this.blockSize);
-    const indexBits = Math.log2(Math.floor(this.cacheSize / this.blockSize));
-    const tagBits = 10 - offsetBits - indexBits;
-    const tag = binaryAddress.slice(0, tagBits);
-    const index = binaryAddress.slice(tagBits, tagBits + indexBits);
-    const offset = binaryAddress.slice(tagBits + indexBits);
+    const { index, tag, offset } = this.decodeCacheAddress(binaryAddress);
 
     const decimalIndex = parseInt(index, 2);
     const block = this.cache[decimalIndex];
@@ -108,11 +106,9 @@ export class DMappedCache {
       block.tag = tag;
     }
 
-    const binaryInputData = data.toString(2).padStart(bytesNumber * 8, "0");
-
     const decimalOffset = parseInt(offset, 2);
     for (let i = 0; i < bytesNumber; i++) {
-      block.data[decimalOffset + i] = binaryInputData.slice(i * 8, (i + 1) * 8);
+      block.data[decimalOffset + i] = (data >> (8 * (bytesNumber - i - 1))) & 0xff;
     }
 
     block.dirty = true;
