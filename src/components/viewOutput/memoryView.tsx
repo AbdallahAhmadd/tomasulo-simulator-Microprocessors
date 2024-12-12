@@ -23,7 +23,7 @@ interface MemoryRow {
 
 export const MemoryView: React.FC<MemoryProps> = ({ memory }) => {
   const [rows, setRows] = useState<MemoryRow[]>([]);
-  const [isCollapsed, setIsCollapsed] = useState(false); // State to track if rows are collapsed
+  const [isCollapsed, setIsCollapsed] = useState(true); // State to track if rows are collapsed
 
   useEffect(() => {
     const memoryRows: MemoryRow[] = [];
