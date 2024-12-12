@@ -1,4 +1,4 @@
-import { Cache } from "./cache";
+import { DMappedCache } from "./hardwareComponents/Cache.ts";
 import { Memory } from "./hardwareComponents/Memory";
 import { Instructions } from "./enums.ts";
 export interface instruction {
@@ -19,6 +19,7 @@ export interface ReservationStation {
   qk: string;
   A: number;
   timeRemaining: number;
+  result?: number;
 }
 
 export interface LoadBuffer {

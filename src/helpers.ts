@@ -15,6 +15,7 @@ import { Instructions } from "./enums";
 export const parseInstructions = (StringInstructions: string[]) => {
   const parsedInstructions: instruction[] = [];
   let labelAddress = "";
+
   StringInstructions.forEach((instruction) => {
     if (instruction.includes(":")) {
       const split = instruction.split(":"); // ["LOOP", "L.D F0, R1"]
@@ -22,12 +23,26 @@ export const parseInstructions = (StringInstructions: string[]) => {
       split.shift(); //[ "L.D F0, R1"]
       instruction = split.join("").trim(); // "L.D F0, R1"
     }
+
     const [opcode, rd, rs, rt] = instruction.split(" ");
 
-    parsedInstructions.push({ opcode: opcode as Instructions, rd, rs, rt, labelAddress });
+    if (opcode === 'BNE' || opcode === 'BEQ') {
+      parsedInstructions.push({ opcode: opcode as Instructions, rd: rt, rs: rd , rt: rs, labelAddress });
+    } else {
+      parsedInstructions.push({ opcode: opcode as Instructions, rd, rs, rt, labelAddress });
+    }
     labelAddress = "";
   });
 
+  //replace labelAddress with actual address
+  parsedInstructions.forEach((instruction, index) => {
+    if ((instruction.opcode === 'BNE' || instruction.opcode === "BEQ") && instruction.rd) {
+      const labelInstructionIndex = parsedInstructions.findIndex((instr) => instr.labelAddress === instruction.rd);
+      if (labelInstructionIndex !== -1) {
+        instruction.rd = labelInstructionIndex.toString();
+      }
+    }
+  });
   return parsedInstructions;
 };
 
