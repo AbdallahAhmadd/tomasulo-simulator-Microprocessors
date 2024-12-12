@@ -2,16 +2,16 @@ import React, {useEffect, useState} from "react";
 import FileUploader from "./components/InstructionParser.tsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import InstructionTable from "./components/InstructionsTable.tsx";
 import LatencyInput from "../src/components/UserInput/LatencyInput.tsx";
 import { latencies, SystemConfig } from "./types";
 import CacheInput from "./components/UserInput/cacheInput.tsx";
-import ReservationStation from "./components/ReservationStation.tsx";
 import FpReservationStationInput from "./components/UserInput/FpReservationStations.tsx";
 import IntReservationStationInput from "./components/UserInput/IntReservationStations.tsx";
 import BufferConfiguration from "./components/UserInput/BufferConfiguration.tsx";
 import RegisterFileConfiguration from "./components/UserInput/RegisterFileConfiguration.tsx";
 import {initializeSystem} from "./simulator.ts";  
+import { StoreBuffer, SystemState } from './types.ts'
+
 function App() {
   const [instructionQueue, setInstructionQueue] = useState<string[]>([]);
   const [fpAddReservationStationsNums, setfpAddReservationStationsNums] = useState<number>(0);
@@ -25,7 +25,7 @@ function App() {
   const [cacheSize, setCacheSize] = useState<number>(0);
   const [blockSize, setBlockSize] = useState<number>(0);
   const [latencies, setLatencies] = useState<latencies>();
-
+  const [systemState, setSystemState] = useState<SystemState>(); 
 
   const handleLatancySave = (updatedLatencies: latencies) => {
     console.log("Received latencies:", updatedLatencies);
@@ -95,10 +95,12 @@ function App() {
       blockSize,
       latencies
     };
-    initializeSystem(instructionQueue, SystemConfig);
+    setSystemState(initializeSystem(instructionQueue, SystemConfig));
     console.log("SystemConfig:", SystemConfig);
     console.log('instructionQueue:', instructionQueue);
   };
+
+  
 
   return (
       <>
