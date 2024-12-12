@@ -6,19 +6,27 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
+  IconButton,
 } from "@mui/material";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { Memory } from "../../hardwareComponents/Memory";
 
 interface MemoryProps {
   memory: Memory;
 }
 
+interface MemoryRow {
+  address: number;
+  value: string;
+}
+
 export const MemoryView: React.FC<MemoryProps> = ({ memory }) => {
-  const [rows, setRows] = useState<{ address: number; value: string }[]>([]);
+  const [rows, setRows] = useState<MemoryRow[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState(false); // State to track if rows are collapsed
 
   useEffect(() => {
-    const memoryRows: { address: number; value: string }[] = [];
+    const memoryRows: MemoryRow[] = [];
 
     for (let address = 0; address < memory["memory"].length; address++) {
       memoryRows.push({
@@ -30,11 +38,24 @@ export const MemoryView: React.FC<MemoryProps> = ({ memory }) => {
     setRows(memoryRows);
   }, [memory]);
 
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed); // Toggle the collapse state
+  };
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="Memory Table">
         <TableHead>
           <TableRow>
+            <TableCell>
+              <IconButton
+                aria-label="expand/collapse rows"
+                size="small"
+                onClick={toggleCollapse}
+              >
+                {isCollapsed ? <KeyboardArrowDown /> : <KeyboardArrowUp />}
+              </IconButton>
+            </TableCell>
             <TableCell
               align="center"
               sx={{ backgroundColor: "#000", color: "#fff", fontWeight: "bold" }}
@@ -50,8 +71,9 @@ export const MemoryView: React.FC<MemoryProps> = ({ memory }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {rows.slice(0, isCollapsed ? 4 : rows.length).map((row) => (
             <TableRow key={row.address}>
+              <TableCell />
               <TableCell align="center">{row.address}</TableCell>
               <TableCell align="center">{row.value}</TableCell>
             </TableRow>
