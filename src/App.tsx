@@ -75,6 +75,9 @@ function App() {
 
     reader.readAsText(file);
   };
+
+  const [showExecutionPage, setShowExecutionPage] = useState(false);
+  const [SystemConfig, setSystemConfig] = useState<SystemConfig>();
   const handleExecution = () => {
     if (!latencies) {
       toast.error("Please provide latency values.");
@@ -93,27 +96,40 @@ function App() {
       blockSize,
       latencies,
     };
-    console.log("System State:",initializeSystem(instructionQueue, SystemConfig));
+    initializeSystem(instructionQueue, SystemConfig);
+    setSystemConfig(SystemConfig);
     console.log("SystemConfig:", SystemConfig);
     console.log("instructionQueue:", instructionQueue);
+    setShowExecutionPage(true);
+    console.log("Execution started");
   };
 
   return (
     <>
-      <div>
-        <FileUploader onChange={handleFileUpload} />
-        <LatencyInput onSave={handleLatancySave} />
-        <CacheInput onSave={handleCacheSave} />
-        <FpReservationStationInput onSave={handleFpReservationStation} />
-        <IntReservationStationInput onSave={handleIntReservationStation} />
-        <BufferConfiguration onSave={handleBufferSaveConfiguration} />;
-        <RegisterFileConfiguration onSave={handleRegisterSaveConfiguration} />
-        <div className="buttondiv">
-          <button className="execution" onClick={handleExecution}>
-            Start Execution
-          </button>
+      {!showExecutionPage ? (
+        <div>
+          <FileUploader onChange={handleFileUpload} />
+          <LatencyInput onSave={handleLatancySave} />
+          <CacheInput onSave={handleCacheSave} />
+          <FpReservationStationInput onSave={handleFpReservationStation} />
+          <IntReservationStationInput onSave={handleIntReservationStation} />
+          <BufferConfiguration onSave={handleBufferSaveConfiguration} />
+          <RegisterFileConfiguration onSave={handleRegisterSaveConfiguration} />
+          <div className="buttondiv">
+            <button className="execution" onClick={handleExecution}>
+              Start Execution
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+          <ReservationStation stations={[SystemConfig?.]} />
+          <ReservationStation stations={[]} />
+          <ReservationStation />
+          <ReservationStation />
+        </>
+      )}
+
       <ToastContainer />
     </>
   );

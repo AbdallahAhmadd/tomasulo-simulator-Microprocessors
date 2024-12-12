@@ -9,8 +9,6 @@ import {
   TableHead,
   TableRow,
   Paper,
-  TextField,
-  Button,
 } from "@mui/material";
 
 interface ReservationStationProps {
@@ -51,13 +49,14 @@ export const ReservationStationView: React.FC<ReservationStationProps> = ({ rese
 }, [reservationstation]);
 
 
+const ReservationStation: React.FC<ReservationStationProps> = ({ stations }) => {
   return (
     <div>
 
 
       {/* Table */}
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="Dynamic Table">
+        <Table sx={{ minWidth: 650 }} aria-label="Reservation Stations">
           <TableHead>
             <TableRow>
             <TableCell
@@ -76,19 +75,25 @@ export const ReservationStationView: React.FC<ReservationStationProps> = ({ rese
                 align="center"
                 sx={{ backgroundColor: "#000", color: "#fff" }}
               >
-                busy
+                Tag
               </TableCell>
               <TableCell
                 align="center"
                 sx={{ backgroundColor: "#000", color: "#fff" }}
               >
-                op
+                Busy
               </TableCell>
               <TableCell
                 align="center"
                 sx={{ backgroundColor: "#000", color: "#fff" }}
               >
-                vi
+                Op
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{ backgroundColor: "#000", color: "#fff" }}
+              >
+                Vj
               </TableCell>
               <TableCell
                 align="center"
@@ -100,7 +105,7 @@ export const ReservationStationView: React.FC<ReservationStationProps> = ({ rese
                 align="center"
                 sx={{ backgroundColor: "#000", color: "#fff" }}
               >
-                Qi
+                Qj
               </TableCell>
               <TableCell
                 align="center"
@@ -114,10 +119,22 @@ export const ReservationStationView: React.FC<ReservationStationProps> = ({ rese
               >
                 A
               </TableCell>
+              <TableCell
+                align="center"
+                sx={{ backgroundColor: "#000", color: "#fff" }}
+              >
+                Time Remaining
+              </TableCell>
+              <TableCell
+                align="center"
+                sx={{ backgroundColor: "#000", color: "#fff" }}
+              >
+                Result
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {stations.map((station, index) => (
               <TableRow key={index}>
                 <TableCell align="center">{row.timeRemaining}</TableCell>
                 <TableCell align="center">{row.tag}</TableCell>
@@ -135,4 +152,6 @@ export const ReservationStationView: React.FC<ReservationStationProps> = ({ rese
       </TableContainer>
     </div>
   );
-}
+};
+
+export default ReservationStation;
