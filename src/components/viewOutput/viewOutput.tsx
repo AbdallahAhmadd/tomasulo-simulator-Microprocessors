@@ -76,7 +76,10 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
       </div>
       <div className="section">
         <h2>Cache:</h2>
-        <CacheView Cache={systemState.cache.getCache()} />
+        <CacheView
+          Cache={systemState.cache.getCache()}
+          blockSize={systemState.cache.getBlockSize()}
+        />
       </div>
       <div className="section">
         <h2>Memory:</h2>

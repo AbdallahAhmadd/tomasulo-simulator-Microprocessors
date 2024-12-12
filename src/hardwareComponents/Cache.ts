@@ -129,4 +129,10 @@ export class DMappedCache {
   public getCache(): block[] {
     return this.cache;
   }
+  public getCacheSize(): number {
+    return this.cacheSize;
+  }
+  public getBlockSize(): number {
+    return this.blockSize;
+  }
 }
