@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { StoreBuffer } from "../types";
+import { StoreBuffer } from "../../types";
 
 import {
   Table,

@@ -2,16 +2,16 @@ import React, {useEffect, useState} from "react";
 import FileUploader from "./components/InstructionParser.tsx";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import InstructionTable from "./components/InstructionsTable.tsx";
 import LatencyInput from "../src/components/UserInput/LatencyInput.tsx";
-import { latencies, SystemConfig } from "./types";
+import { latencies, SystemConfig, SystemState } from "./types";
 import CacheInput from "./components/UserInput/cacheInput.tsx";
-import ReservationStation from "./components/ReservationStation.tsx";
 import FpReservationStationInput from "./components/UserInput/FpReservationStations.tsx";
 import IntReservationStationInput from "./components/UserInput/IntReservationStations.tsx";
 import BufferConfiguration from "./components/UserInput/BufferConfiguration.tsx";
 import RegisterFileConfiguration from "./components/UserInput/RegisterFileConfiguration.tsx";
 import {initializeSystem} from "./simulator.ts";  
+import {ViewOutput} from "./components/viewOutput/viewOutput.tsx";
+
 function App() {
   const [instructionQueue, setInstructionQueue] = useState<string[]>([]);
   const [fpAddReservationStationsNums, setfpAddReservationStationsNums] = useState<number>(0);
@@ -25,7 +25,7 @@ function App() {
   const [cacheSize, setCacheSize] = useState<number>(0);
   const [blockSize, setBlockSize] = useState<number>(0);
   const [latencies, setLatencies] = useState<latencies>();
-
+  const [systemState, setSystemState] = useState<SystemState>(); 
 
   const handleLatancySave = (updatedLatencies: latencies) => {
     console.log("Received latencies:", updatedLatencies);
@@ -77,6 +77,11 @@ function App() {
 
     reader.readAsText(file);
   };
+
+  const [showExecutionPage, setShowExecutionPage] = useState(false);
+  const [SystemConfig, setSystemConfig] = useState<SystemConfig>();
+  const [reservationStation, setReservationStation] = useState<SystemState>();
+
   const handleExecution = () => {
     if (!latencies) {
       toast.error("Please provide latency values.");
@@ -95,28 +100,39 @@ function App() {
       blockSize,
       latencies
     };
-    initializeSystem(instructionQueue, SystemConfig);
+    setSystemState(initializeSystem(instructionQueue, SystemConfig));
     console.log("SystemConfig:", SystemConfig);
-    console.log('instructionQueue:', instructionQueue);
+    console.log("instructionQueue:", instructionQueue);
+    setShowExecutionPage(true);
+    console.log("Execution started");
   };
 
+  
+
   return (
-      <>
+    <>
+      {!showExecutionPage ? (
         <div>
-        <FileUploader onChange={handleFileUpload} />
-        <LatencyInput onSave={handleLatancySave} />
-        <CacheInput onSave={handleCacheSave} />
-        <FpReservationStationInput onSave={handleFpReservationStation} />
-        <IntReservationStationInput onSave={handleIntReservationStation} />
-        <BufferConfiguration onSave={handleBufferSaveConfiguration}/>;
-        <RegisterFileConfiguration onSave={handleRegisterSaveConfiguration}/>
-        <div className="buttondiv">
-        <button className="execution" onClick={handleExecution}>Start Execution</button>
+          <FileUploader onChange={handleFileUpload} />
+          <LatencyInput onSave={handleLatancySave} />
+          <CacheInput onSave={handleCacheSave} />
+          <FpReservationStationInput onSave={handleFpReservationStation} />
+          <IntReservationStationInput onSave={handleIntReservationStation} />
+          <BufferConfiguration onSave={handleBufferSaveConfiguration} />
+          <RegisterFileConfiguration onSave={handleRegisterSaveConfiguration} />
+          <div className="buttondiv">
+            <button className="execution" onClick={handleExecution}>
+              Start Execution
+            </button>
+          </div>
         </div>
+      ) : (
+        <>        
+          {systemState && <ViewOutput systemState={systemState} />}
+        </>
+      )}
 
-        </div>
-        <ToastContainer />
-
+      <ToastContainer />
     </>
   )
 }

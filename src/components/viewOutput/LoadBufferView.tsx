@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { intReservationStation } from "../types";
+import { LoadBuffer } from "../../types";
 
 import {
   Table,
@@ -11,36 +11,33 @@ import {
   Paper
 } from "@mui/material";
 
-interface ReservationStationProps {
-    reservationstation: intReservationStation[];
+interface LoadBufferProps {
+    loadbuffer: LoadBuffer[];
   
 }
 
 
-export const IntReservationStationView: React.FC<ReservationStationProps> = ({ reservationstation }) => {
+export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
   const [rows, setRows] = useState<
     {
         tag: string;
-        busy: string;
-        value: number;
-        v: number;
-        q: string;
+        busy: boolean;
+        address: number;
         timeRemaining: number;
     }[]
   >([]);
   useEffect(() => {
-    if (reservationstation) {
-      const formattedRows = reservationstation.map((station: intReservationStation) => ({
-            tag: station.tag,
-            busy: station.busy ? "1 " : "0",
-            value: station.value,
-            v: station.v, 
-            q: station.q,
-            timeRemaining: station.timeRemaining,
+    if (loadbuffer) {
+      const formattedRows = loadbuffer.map((buffer: LoadBuffer) => ({
+            tag: buffer.tag,
+            busy: buffer.busy,
+            address: buffer.address,
+            timeRemaining: buffer.timeRemaining,
+  
         }));
         setRows(formattedRows);
     }
-}, [reservationstation]);
+}, [loadbuffer]);
   
   
 
@@ -55,51 +52,35 @@ export const IntReservationStationView: React.FC<ReservationStationProps> = ({ r
                 align="center"
                 sx={{ backgroundColor: "#000", color: "#fff" }}
               >
-                time remaining
+                Tag
               </TableCell>
               <TableCell
                 align="center"
                 sx={{ backgroundColor: "#000", color: "#fff" }}
               >
-                tag
+                Busy
               </TableCell>
               <TableCell
                 align="center"
                 sx={{ backgroundColor: "#000", color: "#fff" }}
               >
-                busy
+                Address
               </TableCell>
               <TableCell
                 align="center"
                 sx={{ backgroundColor: "#000", color: "#fff" }}
               >
-                value
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
-                v
-              </TableCell>
-              <TableCell
-                align="center"
-                sx={{ backgroundColor: "#000", color: "#fff" }}
-              >
-                Q
+                Time Remaining
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row, index) => (
               <TableRow key={index}>
-                <TableCell align="center">{row.timeRemaining}</TableCell>
                 <TableCell align="center">{row.tag}</TableCell>
-
                 <TableCell align="center">{row.busy}</TableCell>
-                <TableCell align="center">{row.value}</TableCell>
-                <TableCell align="center">{row.v}</TableCell>
-                <TableCell align="center">{row.q}</TableCell>
-
+                <TableCell align="center">{row.address}</TableCell>
+                <TableCell align="center">{row.timeRemaining}</TableCell>
               </TableRow>
             ))}
           </TableBody>
