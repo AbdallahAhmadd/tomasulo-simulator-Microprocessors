@@ -48,6 +48,7 @@ export function initializeSystem(instructionQueue: string[], config: SystemConfi
   };
 }
 
+
 export function nextSystemState(systemState: SystemState): SystemState {
   const newState = structuredClone(systemState);
 
@@ -55,12 +56,8 @@ export function nextSystemState(systemState: SystemState): SystemState {
   newState.clockCycle++;
 
   issueInstruction(newState);
-
   execute(newState);
-
   writeBack(newState);
-
-  console.log(newState);
 
   return newState;
 }
