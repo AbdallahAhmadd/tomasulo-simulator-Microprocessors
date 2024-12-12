@@ -41,11 +41,11 @@ export class DMappedCache {
             throw new Error(`Address ${address} is not aligned for double word access.`);
         }
 
-        const binaryAddress = address.toString(2).padStart(7, '0');
+        const binaryAddress = address.toString(2).padStart(10, '0');
 
         const offsetBits = Math.log2(this.blockSize);
         const indexBits = Math.log2(Math.floor(this.cacheSize / this.blockSize));
-        const tagBits = 7 - offsetBits - indexBits;
+        const tagBits = 10 - offsetBits - indexBits;
         const tag = binaryAddress.slice(0, tagBits);
         const index = binaryAddress.slice(tagBits, tagBits + indexBits);
         const offset = binaryAddress.slice(tagBits + indexBits);
@@ -78,11 +78,11 @@ export class DMappedCache {
             throw new Error(`Address ${address} is not aligned for double word access.`);
         }
 
-        const binaryAddress = address.toString(2).padStart(7, '0');
+        const binaryAddress = address.toString(2).padStart(10, '0');
 
         const offsetBits = Math.log2(this.blockSize);
         const indexBits = Math.log2(Math.floor(this.cacheSize / this.blockSize));
-        const tagBits = 7 - offsetBits - indexBits;
+        const tagBits = 10 - offsetBits - indexBits;
         const tag = binaryAddress.slice(0, tagBits);
         const index = binaryAddress.slice(tagBits, tagBits + indexBits);
         const offset = binaryAddress.slice(tagBits + indexBits);
