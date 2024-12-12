@@ -9,15 +9,40 @@ import CacheView from "./CacheView";
 import { RegisterFile } from "./RegFile";
 import { MemoryView } from "./memoryView";
 import InstructionQueue from "./InstructionQueue";
+import { Button } from "@mui/material";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 interface viewOutputProps {
   systemState: SystemState;
   instructionQueue?: string[];
+  clockCycle: number;
+  onForwardClick: () => void;
 }
 
-export const ViewOutput: React.FC<viewOutputProps> = ({ systemState, instructionQueue = [] }) => {
+export const ViewOutput: React.FC<viewOutputProps> = ({
+  systemState,
+  instructionQueue = [],
+  onForwardClick,
+  clockCycle,
+}) => {
   return (
     <div className="view-output">
+      <h3>Clock Cycle</h3>
+      <Button
+        variant="contained"
+        onClick={onForwardClick}
+        endIcon={<ArrowForwardIcon />}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          minWidth: 150, // Adjust for consistent button size
+          padding: "8px 16px",
+          fontSize: "16px",
+        }}
+      >
+        {clockCycle}
+      </Button>
       <div className="cycle-info">
         <h1>Cycle: {systemState.clockCycle}</h1>
       </div>
