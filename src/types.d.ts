@@ -110,3 +110,10 @@ export interface SystemConfig {
   blockSize: number;
   latencies: latencies;
 }
+
+export interface CacheBlock {
+  tag: number;
+  valid: boolean;
+  dirty: boolean;
+  data: number[];
+}

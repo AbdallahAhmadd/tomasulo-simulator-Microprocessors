@@ -1,21 +1,95 @@
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper
+} from "@mui/material";
+import {instructionEntry } from "../../types";
+import { useEffect, useState } from "react";
 
-const data = [
-  { instruction: "L.D", i: "R2", j: "F6", k: "32", issue: "", exec: "", write: "" },
-  { instruction: "L.D", i: "R3", j: "F2", k: "44", issue: "", exec: "", write: "" },
-  { instruction: "MUL.D", i: "F4", j: "F0", k: "F2", issue: "", exec: "", write: "" },
-  { instruction: "SUB.D", i: "F2", j: "F8", k: "F6", issue: "", exec: "", write: "" },
-  { instruction: "DIV.D", i: "F6", j: "F10", k: "F0", issue: "", exec: "", write: "" },
-  { instruction: "ADD.D", i: "F2", j: "F6", k: "F8", issue: "", exec: "", write: "" },
-];
 
-export default function InstructionTable() {
+interface InstructionTableProps{
+  instructions: instructionEntry[];
+}
+export const InstructionTable: React.FC<InstructionTableProps> = ({ instructions }) => {
+  const [rows, setRows] = useState<
+    {
+      opcode: string;
+      rd: string;
+      j: string;
+      k: string;
+      issue?: number;
+      exec?: string;
+      write?: number;
+    }[]
+  >([]);
+
+  // Map instruction type to determine how to populate j, k
+  useEffect(() => {
+    if (instructions) {
+      const formattedRows = instructions.map((inst: instructionEntry) => {
+        let j = "";
+        let k = "";
+
+        // Logic to set j, k, and rd based on opcode type
+        switch (inst.instruction.opcode) {
+          case "LW":
+          case "LD":
+          case "L.S":
+          case "L.D":
+            j = inst.instruction.rs;
+            k = inst.instruction.labelAddress || "0"; 
+            break;
+          case "SW":
+          case "SD":
+          case "S.S":
+          case "S.D":
+            j = inst.instruction.rs; 
+            k = inst.instruction.labelAddress || "0"; 
+            break;
+          case "DADDI":
+          case "DSUBI":
+            j = inst.instruction.rs; // Source register
+            k = inst.instruction.labelAddress || "Immediate"; 
+            break;
+          case "ADD.D":
+          case "ADD.S":
+          case "SUB.D":
+          case "SUB.S":
+          case "MUL.D":
+          case "MUL.S":
+          case "DIV.D":
+          case "DIV.S":
+            j = inst.instruction.rs;
+            k = inst.instruction.rt;
+            break;
+          case "BNE":
+          case "BEQ":
+            j = inst.instruction.rs; 
+            k = inst.instruction.rt; 
+            break;
+          default:
+            break;
+        }
+
+        return {
+          opcode: inst.instruction.opcode,
+          rd: inst.instruction.rd,
+          j,
+          k,
+          issue: inst.issue, 
+          exec: inst.execution_complete, 
+          write: inst.writeResult, 
+        };
+      });
+
+      setRows(formattedRows);
+    }
+  }, [instructions]);
+
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="Instruction Table">
@@ -136,10 +210,10 @@ export default function InstructionTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((row, index) => (
+          {rows.map((row, index) => (
             <TableRow key={index}>
-              <TableCell align="center">{row.instruction}</TableCell>
-              <TableCell align="center">{row.i}</TableCell>
+              <TableCell align="center">{row.opcode}</TableCell>
+              <TableCell align="center">{row.rd}</TableCell>
               <TableCell align="center">{row.j}</TableCell>
               <TableCell align="center">{row.k}</TableCell>
               <TableCell align="center">{row.issue}</TableCell>
@@ -151,4 +225,4 @@ export default function InstructionTable() {
       </Table>
     </TableContainer>
   );
-}
+};
