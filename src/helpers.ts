@@ -70,8 +70,9 @@ export const initializeStoreBuffer = (size: number): StoreBuffer[] => {
     tag: `S${i + 1}`,
     op: "",
     v: 0,
-    q: "",
-    address: 0,
+    qj: "0",
+    qk: "0",
+    address: 0
   }));
 };
 
