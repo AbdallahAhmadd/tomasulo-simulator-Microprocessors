@@ -11,7 +11,7 @@ export function writeBack(newState: SystemState) {
 
   for (let i = 0; i < newState.fpAddReservationStations.length; i++) {
     const station = newState.fpAddReservationStations[i];
-    if (station.busy === true && station.result !== undefined) {
+    if (station.busy === true && station.timeRemaining == 0 && station.result !== undefined) {
       if (
         newState.instructionTable[station.instructionTableIndex!].end_execution ===
         newState.clockCycle
@@ -24,7 +24,7 @@ export function writeBack(newState: SystemState) {
 
   for (let i = 0; i < newState.fpMulReservationStations.length; i++) {
     const station = newState.fpMulReservationStations[i];
-    if (station.busy === true && station.result !== undefined) {
+    if (station.busy === true && station.timeRemaining == 0 && station.result !== undefined) {
       if (
         newState.instructionTable[station.instructionTableIndex!].end_execution ===
         newState.clockCycle
@@ -37,7 +37,7 @@ export function writeBack(newState: SystemState) {
 
   for (let i = 0; i < newState.intAddReservationStations.length; i++) {
     const station = newState.intAddReservationStations[i];
-    if (station.busy === true && station.result !== undefined) {
+    if (station.busy === true && station.timeRemaining == 0 && station.result !== undefined) {
       if (
         newState.instructionTable[station.instructionTableIndex!].end_execution ===
         newState.clockCycle
@@ -48,11 +48,26 @@ export function writeBack(newState: SystemState) {
     }
   }
 
+  for (let i = 0; i < newState.loadBuffer.length; i++) {
+    const buffer = newState.loadBuffer[i];
+    if (buffer.busy == true && buffer.timeRemaining == 0 && buffer.result !== undefined) {
+      if (
+        newState.instructionTable[buffer.instructionTableIndex!].end_execution ===
+        newState.clockCycle
+      ) {
+        continue;
+      }
+      candidates.push(buffer);
+    }
+  }
+
+  console.log("Candidates: ", candidates);
   //if there is no instruction to be written return
   if (candidates.length === 0) return;
 
   const toBeWrttenStation = getReservationStationWithHighestDependencies(candidates, newState);
 
+  console.log("Chosen station: ", toBeWrttenStation);
   if (toBeWrttenStation.result !== undefined) {
     newState.CDB = { tag: toBeWrttenStation.tag, value: toBeWrttenStation.result };
     newState.instructionTable[toBeWrttenStation.instructionTableIndex!].writeResult =

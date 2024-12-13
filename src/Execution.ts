@@ -41,7 +41,7 @@ export function execute(newState: SystemState) {
         const value2 = station.vk;
         station.result = AluOperation(value1, value2, station.op);
       }
-      station.timeRemaining!--;
+      if (station.timeRemaining > 0) station.timeRemaining!--;
     }
   });
 
@@ -62,7 +62,7 @@ export function execute(newState: SystemState) {
         const value2 = station.vk;
         station.result = AluOperation(value1, value2, station.op);
       }
-      station.timeRemaining!--;
+      if (station.timeRemaining > 0) station.timeRemaining!--;
     }
   });
 
@@ -87,7 +87,7 @@ export function execute(newState: SystemState) {
           if (station.result === 0) newState.pc = station.A;
         } else station.result = AluOperation(value1, value2, station.op);
       }
-      station.timeRemaining!--;
+      if (station.timeRemaining > 0) station.timeRemaining!--;
     }
   });
   for (let i = 0; i < newState.loadBuffer.length; i++) {
@@ -146,9 +146,7 @@ export function execute(newState: SystemState) {
           default:
             throw new Error(`Unsupported operation: ${buffer.op}`);
         }
-      } else {
-        buffer.timeRemaining!--;
-      }
+      } else if (buffer.timeRemaining > 0) buffer.timeRemaining!--;
     }
   }
 
@@ -182,7 +180,7 @@ export function execute(newState: SystemState) {
             throw new Error(`Unsupported operation: ${buffer.op}`);
         }
       }
-      buffer.timeRemaining!--;
+      if (buffer.timeRemaining > 0) buffer.timeRemaining!--;
     }
   });
 }

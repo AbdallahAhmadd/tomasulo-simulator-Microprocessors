@@ -8,90 +8,12 @@ import {
   Paper,
 } from "@mui/material";
 import { instructionEntry } from "../../types";
-import { useEffect, useState } from "react";
 
 interface InstructionTableProps {
   instructions: instructionEntry[];
   clockCycle: number;
 }
 export const InstructionTable: React.FC<InstructionTableProps> = ({ instructions, clockCycle }) => {
-  const [rows, setRows] = useState<
-    {
-      opcode: string;
-      rd: string;
-      j: string;
-      k: string;
-      issue?: number;
-      start_execution?: number;
-      end_execution?: number;
-      write?: number;
-    }[]
-  >([]);
-
-  // Map instruction type to determine how to populate j, k
-  useEffect(() => {
-    if (instructions) {
-      const formattedRows = instructions.map((inst: instructionEntry) => {
-        let j = "";
-        let k = "";
-
-        // Logic to set j, k, and rd based on opcode type
-        switch (inst.instruction.opcode) {
-          case "LW":
-          case "LD":
-          case "L.S":
-          case "L.D":
-            j = inst.instruction.rs;
-            k = inst.instruction.labelAddress || "0";
-            break;
-          case "SW":
-          case "SD":
-          case "S.S":
-          case "S.D":
-            j = inst.instruction.rs;
-            k = inst.instruction.labelAddress || "0";
-            break;
-          case "DADDI":
-          case "DSUBI":
-            j = inst.instruction.rs; // Source register
-            k = inst.instruction.labelAddress || "Immediate";
-            break;
-          case "ADD.D":
-          case "ADD.S":
-          case "SUB.D":
-          case "SUB.S":
-          case "MUL.D":
-          case "MUL.S":
-          case "DIV.D":
-          case "DIV.S":
-            j = inst.instruction.rs;
-            k = inst.instruction.rt;
-            break;
-          case "BNE":
-          case "BEQ":
-            j = inst.instruction.rs;
-            k = inst.instruction.rt;
-            break;
-          default:
-            break;
-        }
-
-        return {
-          opcode: inst.instruction.opcode,
-          rd: inst.instruction.rd,
-          j,
-          k,
-          issue: inst.issue,
-          start_execution: inst.start_execution,
-          end_execution: inst.end_execution,
-          write: inst.writeResult,
-        };
-      });
-
-      setRows(formattedRows);
-    }
-  }, [instructions]);
-
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="Instruction Table">
@@ -191,19 +113,23 @@ export const InstructionTable: React.FC<InstructionTableProps> = ({ instructions
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => {
-            let formattedExecution = row.start_execution ? row.start_execution + "..." : "";
+          {instructions.map((instructionEntry, index) => {
+            let formattedExecution = instructionEntry.start_execution
+              ? instructionEntry.start_execution + "..."
+              : "";
             formattedExecution +=
-              row.end_execution && clockCycle >= row.end_execution ? row.end_execution : "";
+              instructionEntry.end_execution && clockCycle >= instructionEntry.end_execution
+                ? instructionEntry.end_execution
+                : "";
             return (
               <TableRow key={index}>
-                <TableCell align="center">{row.opcode}</TableCell>
-                <TableCell align="center">{row.rd}</TableCell>
-                <TableCell align="center">{row.j}</TableCell>
-                <TableCell align="center">{row.k}</TableCell>
-                <TableCell align="center">{row.issue}</TableCell>
+                <TableCell align="center">{instructionEntry.instruction.opcode}</TableCell>
+                <TableCell align="center">{instructionEntry.instruction.rd}</TableCell>
+                <TableCell align="center">{instructionEntry.instruction.rs}</TableCell>
+                <TableCell align="center">{instructionEntry.instruction.rt}</TableCell>
+                <TableCell align="center">{instructionEntry.issue}</TableCell>
                 <TableCell align="center">{formattedExecution}</TableCell>
-                <TableCell align="center">{row.write}</TableCell>
+                <TableCell align="center">{instructionEntry.writeResult}</TableCell>
               </TableRow>
             );
           })}
