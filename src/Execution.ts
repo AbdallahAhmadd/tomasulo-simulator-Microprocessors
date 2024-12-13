@@ -154,7 +154,7 @@ export function execute(newState: SystemState) {
               buffer.timeRemaining = 0;
             } catch (error) {
               newState.notes.push(
-                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`,
+                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Cache miss latency is extra 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
