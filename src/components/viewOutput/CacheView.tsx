@@ -56,7 +56,6 @@ const CacheView: React.FC<CacheViewProps> = ({ Cache, blockSize }) => {
         </TableHead>
         <TableBody>
           {Cache?.map((row, index) => {
-            console.log(row, "lalalla");
             return (
               <TableRow key={index}>
                 <TableCell align="center">{index}</TableCell>

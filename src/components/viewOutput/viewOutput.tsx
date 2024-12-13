@@ -2,7 +2,6 @@ import React from "react";
 import { SystemState } from "../../types";
 import { ReservationStationView } from "./ReservationStation";
 import { InstructionTable } from "./InstructionsTable";
-import { IntReservationStationView } from "./IntReservationStationView";
 import { LoadBufferView } from "./LoadBufferView";
 import { StoreBufferView } from "./StoreBufferView";
 import CacheView from "./CacheView";
@@ -25,7 +24,6 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
   onForwardClick,
   clockCycle,
 }) => {
-  console.log(systemState);
   return (
     <div className="view-output">
       <h3>Clock Cycle</h3>
@@ -68,7 +66,7 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
       </div>
       <div className="section">
         <h2>Integer Addition Reservation Stations:</h2>
-        <IntReservationStationView reservationstation={systemState.intAddReservationStations} />
+        <ReservationStationView reservationstation={systemState.intAddReservationStations} />
       </div>
       <div className="section">
         <h2>Load Buffer:</h2>
@@ -80,10 +78,10 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
       </div>
       <div className="section">
         <h2>Cache:</h2>
-        {/* <CacheView
+        <CacheView
           Cache={systemState.cache.getCache()}
           blockSize={systemState.cache.getBlockSize()}
-        /> */}
+        />
       </div>
       <div className="section">
         <h2>Memory:</h2>

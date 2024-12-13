@@ -13,23 +13,6 @@ interface RegisterFileProps {
 }
 
 export const RegisterFile: React.FC<RegisterFileProps> = ({ registerFile }) => {
-  const [rows, setRows] = useState<
-      {
-        registerName: string;
-        Q: string;
-        value: number;
-      }[]
-    >([]);
-    useEffect(() => {
-        if (registerFile) {
-          const formattedRows = registerFile.map((entry: registerFileEntry) => ({
-            registerName:entry.registerName ,
-            Q: entry.Q ,
-            value: entry.value 
-            }));
-            setRows(formattedRows);
-        }
-    }, [registerFile]);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="Register File Table">
@@ -69,7 +52,7 @@ export const RegisterFile: React.FC<RegisterFileProps> = ({ registerFile }) => {
         </TableHead>
 
         <TableBody>
-          {rows.map((entry, index) => (
+          {registerFile.map((entry, index) => (
             <TableRow key={index}>
               <TableCell align="center">{entry.registerName}</TableCell>
               <TableCell align="center">{entry.Q}</TableCell>
@@ -80,4 +63,4 @@ export const RegisterFile: React.FC<RegisterFileProps> = ({ registerFile }) => {
       </Table>
     </TableContainer>
   );
-}
+};

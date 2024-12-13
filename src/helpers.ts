@@ -103,7 +103,7 @@ export const initializeMulStations = (size: number): ReservationStation[] => {
 export const initializeRegisterFile = (size: number, type: string): registerFileEntry[] => {
   return Array.from({ length: size }, (_, i) => ({
     registerName: `${type}${i}`,
-    Q: "",
+    Q: "0",
     value: 0,
   }));
 };

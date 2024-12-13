@@ -70,21 +70,15 @@ export function issueInstruction(systemState: SystemState): void {
       if (isRegisterAvailable(rt, intRegisterFile)) {
         availableSlot.vk = getRegisterValue(rt, intRegisterFile);
       }
-      availableSlot.qj = isRegisterAvailable(rs, registerFile)
-        ? "0"
-        : getRegisterTag(rs, registerFile);
-      availableSlot.qk = isRegisterAvailable(rt, registerFile)
-        ? "0"
-        : getRegisterTag(rt, registerFile);
+      availableSlot.qj = getRegisterTag(rs, registerFile);
+      availableSlot.qk = getRegisterTag(rt, registerFile);
       availableSlot.A = parseInt(rd); // e3tbart en rd feha el target address
     } else if (isImmediate) {
       if (isRegisterAvailable(rs, intRegisterFile)) {
         availableSlot.vj = getRegisterValue(rs, intRegisterFile);
       }
       availableSlot.vk = parseInt(rt); // da el imm value el kona olna aleeh
-      if (isRegisterAvailable(rs, intRegisterFile)) {
-        availableSlot.qj = getRegisterTag(rs, intRegisterFile);
-      }
+      availableSlot.qj = getRegisterTag(rs, intRegisterFile);
       availableSlot.qk = "0";
     } else {
       if (isRegisterAvailable(rs, registerFile)) {
@@ -93,12 +87,8 @@ export function issueInstruction(systemState: SystemState): void {
       if (isRegisterAvailable(rt, registerFile)) {
         availableSlot.vk = getRegisterValue(rt, registerFile);
       }
-      availableSlot.qj = isRegisterAvailable(rs, registerFile)
-        ? "0"
-        : getRegisterTag(rs, registerFile); //might el condition delete later
-      availableSlot.qk = isRegisterAvailable(rt, registerFile)
-        ? "0"
-        : getRegisterTag(rt, registerFile);
+      availableSlot.qj = getRegisterTag(rs, registerFile);
+      availableSlot.qk = getRegisterTag(rt, registerFile);
     }
     availableSlot.tag =
       rsType === "ADD"

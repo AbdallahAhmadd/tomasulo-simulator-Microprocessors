@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { LoadBuffer } from "../../types";
 
 import {
@@ -16,28 +15,6 @@ interface LoadBufferProps {
 }
 
 export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
-  const [rows, setRows] = useState<
-    {
-      opcode: string;
-      tag: string;
-      busy: number;
-      address: number;
-      timeRemaining?: number;
-    }[]
-  >([]);
-  useEffect(() => {
-    if (loadbuffer) {
-      const formattedRows = loadbuffer.map((buffer: LoadBuffer) => ({
-        opcode: buffer.op,
-        tag: buffer.tag,
-        busy: buffer.busy ? 1 : 0,
-        address: buffer.address,
-        timeRemaining: buffer.timeRemaining,
-      }));
-      setRows(formattedRows);
-    }
-  }, [loadbuffer]);
-
   return (
     <div>
       {/* Table */}
@@ -49,10 +26,10 @@ export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
                 Tag
               </TableCell>
               <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
-                Opcode
+                Busy
               </TableCell>
               <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
-                Busy
+                Opcode
               </TableCell>
               <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Address
@@ -63,13 +40,13 @@ export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {loadbuffer.map((buffer, index) => (
               <TableRow key={index}>
-                <TableCell align="center">{row.tag}</TableCell>
-                <TableCell align="center">{row.busy}</TableCell>
-                <TableCell align="center">{row.opcode}</TableCell>
-                <TableCell align="center">{row.address}</TableCell>
-                <TableCell align="center">{row.timeRemaining}</TableCell>
+                <TableCell align="center">{buffer.tag}</TableCell>
+                <TableCell align="center">{buffer.busy ? 1 : 0}</TableCell>
+                <TableCell align="center">{buffer.op}</TableCell>
+                <TableCell align="center">{buffer.address}</TableCell>
+                <TableCell align="center">{buffer.timeRemaining}</TableCell>
               </TableRow>
             ))}
           </TableBody>

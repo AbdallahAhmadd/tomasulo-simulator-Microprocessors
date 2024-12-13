@@ -16,30 +16,6 @@ interface StoreBufferprops {
 }
 
 export const StoreBufferView: React.FC<StoreBufferprops> = ({ storebuffer }) => {
-  const [rows, setRows] = useState<
-    {
-      tag: string;
-      busy: number;
-      address: number;
-      v: number;
-      q: string;
-      timeRemaining?: number;
-    }[]
-  >([]);
-  useEffect(() => {
-    if (storebuffer) {
-      const formattedRows = storebuffer.map((buffer: StoreBuffer) => ({
-        tag: buffer.tag,
-        busy: buffer.busy ? 1 : 0,
-        address: buffer.address,
-        v: buffer.v,
-        q: buffer.q,
-        timeRemaining: buffer.timeRemaining,
-      }));
-      setRows(formattedRows);
-    }
-  }, [storebuffer]);
-
   return (
     <div>
       {/* Table */}
@@ -68,7 +44,7 @@ export const StoreBufferView: React.FC<StoreBufferprops> = ({ storebuffer }) => 
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row, index) => (
+            {storebuffer.map((row, index) => (
               <TableRow key={index}>
                 <TableCell align="center">{row.tag}</TableCell>
                 <TableCell align="center">{row.busy}</TableCell>
