@@ -7,15 +7,34 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { block } from "../../hardwareComponents/Cache";
 
 interface CacheViewProps {
   Cache: block[];
   blockSize: number;
+  missPenalty: number;
 }
 
-const CacheView: React.FC<CacheViewProps> = ({ Cache, blockSize }) => {
+const CacheView: React.FC<CacheViewProps> = ({ Cache, blockSize, missPenalty }) => {
+  const [cache, setCache] = React.useState<block[]>([]);
+
+  function deepCloneBlockArray(blocks: block[]): block[] {
+    return blocks.map((block) => ({
+      dirty: block.dirty,
+      valid: block.valid,
+      tag: block.tag,
+      data: new Uint8Array(block.data),
+      dataView: new DataView(block.data.buffer),
+    }));
+  }
+  useEffect(() => {
+    console.log("Miss Penalty: ", missPenalty);
+    if (missPenalty == 0) {
+      const clonedCache = deepCloneBlockArray(Cache);
+      setCache(clonedCache);
+    }
+  }, [Cache, missPenalty]);
   const headerCellStyle = {
     backgroundColor: "#000",
     color: "#fff",
@@ -55,7 +74,7 @@ const CacheView: React.FC<CacheViewProps> = ({ Cache, blockSize }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Cache?.map((row, index) => {
+          {cache?.map((row, index) => {
             return (
               <TableRow key={index}>
                 <TableCell align="center">{index}</TableCell>

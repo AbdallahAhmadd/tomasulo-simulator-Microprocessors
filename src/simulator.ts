@@ -72,3 +72,16 @@ export function nextSystemState(systemState: SystemState): SystemState {
 
   return newState;
 }
+/*
+note for the next system state, I had two choices to implememt the order of the functions to be called:
+    1. I can call the issueInstruction, execute and then writeBack
+    2. I can call the writeBack, execute and then issueInstruction
+I chose the first option because it makes more sense to issue the instructions first and then go down the pipeline.
+However, there is only one issue with this approach, which is that if a file register will be written to in the writeBack stage
+and in the same clock cycle, the same register will have  a tag placed on it due to some instruction being issued in the issue stage,
+the value in the writeBack stage will never be written to the register file since issue is executed before writeBack.
+However, this is not a problem since this is only a simulation and whoever will need this value the correct value will be obtained from the CDB.
+In real life, this happens all at the same time not one after the other.
+To avoid this problem, I could have called the writeBack function first, then the execute function and then the issue function,
+but I tested the first option so many times so I don't want to change it now.
+*/

@@ -81,6 +81,7 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
         <CacheView
           Cache={systemState.cache.getCache()}
           blockSize={systemState.cache.getBlockSize()}
+          missPenalty={systemState.cacheMissLatency}
         />
       </div>
       <div className="section">
@@ -96,13 +97,13 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
         <RegisterFile registerFile={systemState.intRegisterFile} />
       </div>
       <div className="notes">
-      <h2>Notes:</h2>
-      <ul>
-        {systemState.notes.map((note, index) => (
-          <li key={index}>{note}</li>
-        ))}
-      </ul>
-    </div>
+        <h2>Notes:</h2>
+        <ul>
+          {systemState.notes.map((note, index) => (
+            <li key={index}>{note}</li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
