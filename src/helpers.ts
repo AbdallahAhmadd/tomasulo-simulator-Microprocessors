@@ -59,6 +59,7 @@ export const initializeLoadBuffer = (size: number): LoadBuffer[] => {
     busy: false,
     tag: `L${i + 1}`,
     op: "",
+    q: "0",
     address: 0,
   }));
 };

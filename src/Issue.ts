@@ -1,4 +1,10 @@
-import { registerFileEntry, ReservationStation, SystemState } from "./types";
+import {
+  LoadBuffer,
+  registerFileEntry,
+  ReservationStation,
+  StoreBuffer,
+  SystemState,
+} from "./types";
 import { Instructions } from "./enums";
 import {
   getRegisterTag,
@@ -12,7 +18,7 @@ function checkBranch(systemState: SystemState): boolean {
   const { intAddReservationStations } = systemState;
 
   for (const rs of intAddReservationStations) {
-    if (rs.busy && (rs.op === Instructions.BEQ || rs.op === Instructions.BNE)) {
+    if (!rs.result && (rs.op === Instructions.BEQ || rs.op === Instructions.BNE)) {
       return true;
     }
   }
@@ -55,7 +61,39 @@ export function issueInstruction(systemState: SystemState): void {
   const { opcode, rd, rs, rt } = currentInstruction;
   let issued = false;
 
-  //hanzawed notes
+  function populateLoadBufferEntry(availableSlot: LoadBuffer, registerFile: registerFileEntry[]) {
+    availableSlot.busy = true;
+    availableSlot.op = opcode;
+    if (isNaN(Number(rs))) {
+      if (isRegisterAvailable(rs, intRegisterFile))
+        availableSlot.address = getRegisterValue(rs, intRegisterFile);
+      else {
+        availableSlot.q = getRegisterTag(rs, intRegisterFile);
+      }
+    } else availableSlot.address = parseInt(rs);
+    availableSlot.tag = `L${loadBuffer.indexOf(availableSlot) + 1}`;
+    updateRegisterTag(rd, availableSlot.tag, registerFile);
+    availableSlot.instructionTableIndex = systemState.instructionTable.length;
+    issued = true;
+  }
+
+  function populateStoreBufferEntry(availableSlot: StoreBuffer, registerFile: registerFileEntry[]) {
+    availableSlot.busy = true;
+    availableSlot.op = opcode;
+    if (isNaN(Number(rs))) {
+      if (isRegisterAvailable(rs, intRegisterFile))
+        availableSlot.address = getRegisterValue(rs, intRegisterFile);
+      else {
+        availableSlot.qk = getRegisterTag(rs, intRegisterFile);
+      }
+    } else availableSlot.address = parseInt(rs);
+    if (isRegisterAvailable(rd, registerFile)) availableSlot.v = getRegisterValue(rd, registerFile);
+    availableSlot.qj = getRegisterTag(rd, registerFile);
+    availableSlot.tag = `S${storeBuffer.indexOf(availableSlot) + 1}`;
+    availableSlot.instructionTableIndex = systemState.instructionTable.length;
+    issued = true;
+  }
+
   function populateReservationEntry(
     availableSlot: ReservationStation,
     registerFile: registerFileEntry[],
@@ -168,17 +206,16 @@ export function issueInstruction(systemState: SystemState): void {
 
     case Instructions.LD:
     case Instructions.LW:
+      const availableSlot = loadBuffer.find((lb) => !lb.busy);
+      if (availableSlot) {
+        populateLoadBufferEntry(availableSlot, intRegisterFile);
+      }
+      break;
     case Instructions.L_S:
     case Instructions.L_D: {
       const availableSlot = loadBuffer.find((lb) => !lb.busy);
       if (availableSlot) {
-        availableSlot.busy = true;
-        availableSlot.op = opcode;
-        availableSlot.address = parseInt(rs); //beetgeb el offset bas
-        availableSlot.tag = `L${loadBuffer.indexOf(availableSlot) + 1}`;
-        updateRegisterTag(rd, availableSlot.tag, fpRegisterFile);
-        availableSlot.instructionTableIndex = systemState.instructionTable.length;
-        issued = true;
+        populateLoadBufferEntry(availableSlot, fpRegisterFile);
       }
       break;
     }
@@ -187,20 +224,18 @@ export function issueInstruction(systemState: SystemState): void {
     //												STORE                                                              //
     //=================================================================================================================//
     case Instructions.SD:
-    case Instructions.SW:
+    case Instructions.SW: {
+      const availableSlot = storeBuffer.find((sb) => !sb.busy);
+      if (availableSlot) {
+        populateStoreBufferEntry(availableSlot, intRegisterFile);
+      }
+      break;
+    }
     case Instructions.S_S:
     case Instructions.S_D: {
       const availableSlot = storeBuffer.find((sb) => !sb.busy);
       if (availableSlot) {
-        availableSlot.busy = true;
-        availableSlot.op = opcode;
-        availableSlot.address = parseInt(rs);
-        if (isRegisterAvailable(rd, fpRegisterFile))
-          availableSlot.v = getRegisterValue(rd, fpRegisterFile);
-        availableSlot.q = getRegisterTag(rd, fpRegisterFile);
-        availableSlot.tag = `S${storeBuffer.indexOf(availableSlot) + 1}`;
-        availableSlot.instructionTableIndex = systemState.instructionTable.length;
-        issued = true;
+        populateStoreBufferEntry(availableSlot, fpRegisterFile);
       }
       break;
     }

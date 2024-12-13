@@ -132,7 +132,8 @@ function App() {
     };
     const sysState = initializeSystem(instructionQueue, SystemConfig);
     //for testing purposes only
-    sysState.memory.populateMemory();
+    sysState.memory.write(24, 7.5, 8, true);
+    sysState.memory.write(0, 2, 8, false);
     for (let i = 0; i < 12; i++) {
       sysState.fpRegisterFile[i].value = i * 1.5;
     }

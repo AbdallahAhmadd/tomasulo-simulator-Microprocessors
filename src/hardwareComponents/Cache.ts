@@ -42,9 +42,9 @@ export class DMappedCache {
 
     const decimalIndex = parseInt(index, 2);
     const block = this.cache[decimalIndex];
+    const decimalOffset = parseInt(offset, 2);
 
     if (block.valid && block.tag === tag) {
-      const decimalOffset = parseInt(offset, 2);
       if (fp) {
         if (bytesNumber === 8) return block.dataView.getFloat64(decimalOffset, true);
         else return block.dataView.getFloat32(decimalOffset, true);
@@ -57,7 +57,7 @@ export class DMappedCache {
       }
     } else {
       for (let i = 0; i < this.blockSize; i++) {
-        block.data[i] = memory.read(address + i, 1, false);
+        block.data[i] = memory.read(address + i - decimalOffset, 1, false);
       }
       block.tag = tag;
       block.valid = true;

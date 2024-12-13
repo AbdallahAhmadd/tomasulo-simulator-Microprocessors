@@ -35,16 +35,16 @@ export function execute(newState: SystemState) {
           newState.clockCycle;
         newState.instructionTable[station.instructionTableIndex!].end_execution =
           newState.clockCycle + latency - 1;
-          newState.notes.push(
-            `Instruction ${station.op} at A${index + 1} started execution at cycle ${newState.clockCycle}.`
-          );
+        newState.notes.push(
+          `Instruction ${station.op} at A${index + 1} started execution at cycle ${newState.clockCycle}.`,
+        );
       }
       if (station.timeRemaining == 1) {
         const value1 = station.vj;
         const value2 = station.vk;
         station.result = AluOperation(value1, value2, station.op);
         newState.notes.push(
-          `Instruction ${station.op} at A${index + 1} completed execution at cycle ${newState.clockCycle}.`
+          `Instruction ${station.op} at A${index + 1} completed execution at cycle ${newState.clockCycle}.`,
         );
       }
       if (station.timeRemaining > 0) station.timeRemaining!--;
@@ -62,16 +62,16 @@ export function execute(newState: SystemState) {
           newState.clockCycle;
         newState.instructionTable[station.instructionTableIndex!].end_execution =
           newState.clockCycle + latency - 1;
-          newState.notes.push(
-            `Instruction ${station.op} at M${index + 1} started execution at cycle ${newState.clockCycle}.`
-          );
+        newState.notes.push(
+          `Instruction ${station.op} at M${index + 1} started execution at cycle ${newState.clockCycle}.`,
+        );
       }
       if (station.timeRemaining == 1) {
         const value1 = station.vj;
         const value2 = station.vk;
         station.result = AluOperation(value1, value2, station.op);
         newState.notes.push(
-          `Instruction ${station.op} at M${index + 1} completed execution at cycle ${newState.clockCycle}.`
+          `Instruction ${station.op} at M${index + 1} completed execution at cycle ${newState.clockCycle}.`,
         );
       }
       if (station.timeRemaining > 0) station.timeRemaining!--;
@@ -79,43 +79,60 @@ export function execute(newState: SystemState) {
   });
 
   newState.intAddReservationStations.forEach((station, index) => {
+    // Check if station is busy and operands are ready
     if (station.busy && station.qj === "0" && station.qk === "0") {
-      if (newState.instructionTable[station.instructionTableIndex!].issue == newState.clockCycle)
+      // Skip if the instruction was just issued in the current cycle
+      if (newState.instructionTable[station.instructionTableIndex!].issue === newState.clockCycle) {
         return;
+      }
+
+      // Initialize timeRemaining and set execution start and end times
       if (station.timeRemaining === undefined) {
         const latency = newState.latencies[mapOpToLatencyKey(station.op as Instructions)];
         station.timeRemaining = latency;
-        newState.instructionTable[station.instructionTableIndex!].start_execution =
-          newState.clockCycle;
-        newState.instructionTable[station.instructionTableIndex!].end_execution =
-          newState.clockCycle + latency - 1;
-          newState.notes.push(
-            `Instruction ${station.op} at I${index + 1} started execution at cycle ${newState.clockCycle}.`
-          );
+        const instruction = newState.instructionTable[station.instructionTableIndex!];
+        instruction.start_execution = newState.clockCycle;
+        instruction.end_execution = newState.clockCycle + latency - 1;
+
+        newState.notes.push(
+          `Instruction ${station.op} at I${index + 1} started execution at cycle ${newState.clockCycle}.`,
+        );
       }
-      if (station.timeRemaining == 1) {
-        console.log(`Executing instruction at int Add station ${index}`);
+
+      if (station.timeRemaining === 1) {
         const value1 = station.vj;
         const value2 = station.vk;
+
         if (station.op === Instructions.BEQ || station.op === Instructions.BNE) {
           station.result = AluOperation(value1, value2, Instructions.SUB_D);
-          newState.notes.push(
-            `Instruction ${station.op} at I${index + 1} completed execution at cycle ${newState.clockCycle}.`
-          );
-          if (station.result === 0) newState.pc = station.A;
+          const branchTaken =
+            (station.op === Instructions.BEQ && station.result === 0) ||
+            (station.op === Instructions.BNE && station.result !== 0);
+
+          if (branchTaken) {
+            newState.pc = station.A;
+            newState.notes.push(
+              `Branch instruction ${station.op} at I${index + 1} taken. PC updated to ${station.A}.`,
+            );
+          } else {
+            newState.notes.push(`Branch instruction ${station.op} at I${index + 1} not taken.`);
+          }
         } else {
           station.result = AluOperation(value1, value2, station.op);
           newState.notes.push(
-            `Instruction ${station.op} at Int Add Station ${index + 1} completed execution at cycle ${newState.clockCycle}.`
+            `Instruction ${station.op} at I${index + 1} completed execution at cycle ${newState.clockCycle}.`,
           );
         }
       }
-      if (station.timeRemaining > 0) station.timeRemaining!--;
+
+      if (station.timeRemaining > 0) {
+        station.timeRemaining!--;
+      }
     }
   });
   for (let i = 0; i < newState.loadBuffer.length; i++) {
     const buffer = newState.loadBuffer[i];
-    if (buffer.busy == true) {
+    if (buffer.busy == true && buffer.q === "0") {
       if (newState.instructionTable[buffer.instructionTableIndex!].issue == newState.clockCycle)
         return;
       if (buffer.timeRemaining === undefined) {
@@ -123,9 +140,9 @@ export function execute(newState: SystemState) {
         buffer.timeRemaining = latency;
         newState.instructionTable[buffer.instructionTableIndex!].start_execution =
           newState.clockCycle;
-          newState.notes.push(
-            `Instruction ${buffer.op} at L${i + 1} started execution at cycle ${newState.clockCycle}.`
-          );
+        newState.notes.push(
+          `Instruction ${buffer.op} at L${i + 1} started execution at cycle ${newState.clockCycle}.`,
+        );
       }
       if (buffer.timeRemaining === 1) {
         switch (buffer.op) {
@@ -137,10 +154,9 @@ export function execute(newState: SystemState) {
               buffer.timeRemaining = 0;
             } catch (error) {
               newState.notes.push(
-                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`
+                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
-
             }
             break;
           case Instructions.LD:
@@ -151,7 +167,7 @@ export function execute(newState: SystemState) {
               buffer.timeRemaining = 0;
             } catch (error) {
               newState.notes.push(
-                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`
+                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -164,10 +180,9 @@ export function execute(newState: SystemState) {
               buffer.timeRemaining = 0;
             } catch (error) {
               newState.notes.push(
-                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`
+                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
-
             }
             break;
           case Instructions.L_D:
@@ -177,11 +192,11 @@ export function execute(newState: SystemState) {
                 newState.clockCycle;
               buffer.timeRemaining = 0;
               newState.notes.push(
-                `Instruction ${buffer.op} at L${i + 1} completed execution at cycle ${newState.clockCycle}.`
+                `Instruction ${buffer.op} at L${i + 1} completed execution at cycle ${newState.clockCycle}.`,
               );
             } catch (error) {
               newState.notes.push(
-                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`
+                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -189,13 +204,12 @@ export function execute(newState: SystemState) {
           default:
             throw new Error(`Unsupported operation: ${buffer.op}`);
         }
-        
       } else if (buffer.timeRemaining > 0) buffer.timeRemaining!--;
     }
   }
 
   newState.storeBuffer.forEach((buffer, index) => {
-    if (buffer.busy && buffer.q === "0") {
+    if (buffer.busy && buffer.qj === "0" && buffer.qk === "0") {
       if (newState.instructionTable[buffer.instructionTableIndex!].issue == newState.clockCycle)
         return;
       if (buffer.timeRemaining === undefined) {
@@ -205,9 +219,9 @@ export function execute(newState: SystemState) {
           newState.clockCycle;
         newState.instructionTable[buffer.instructionTableIndex!].end_execution =
           newState.clockCycle + latency - 1;
-          newState.notes.push(
-            `Instruction ${buffer.op} at S${index + 1} started execution at cycle ${newState.clockCycle}.`
-          );
+        newState.notes.push(
+          `Instruction ${buffer.op} at S${index + 1} started execution at cycle ${newState.clockCycle}.`,
+        );
       }
       if (buffer.timeRemaining === 1) {
         switch (buffer.op) {
@@ -227,7 +241,7 @@ export function execute(newState: SystemState) {
             throw new Error(`Unsupported operation: ${buffer.op}`);
         }
         newState.notes.push(
-          `Instruction ${buffer.op} at S${index + 1} completed execution at cycle ${newState.clockCycle}.`
+          `Instruction ${buffer.op} at S${index + 1} completed execution at cycle ${newState.clockCycle}.`,
         );
       }
       if (buffer.timeRemaining > 0) buffer.timeRemaining!--;

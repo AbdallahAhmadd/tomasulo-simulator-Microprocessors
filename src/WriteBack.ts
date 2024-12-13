@@ -1,3 +1,4 @@
+import { Instructions } from "./enums";
 import { LoadBuffer, ReservationStation, StoreBuffer, SystemState } from "./types";
 
 function removeInstructionFromStation(station: LoadBuffer | ReservationStation | StoreBuffer) {
@@ -42,6 +43,11 @@ export function writeBack(newState: SystemState) {
         newState.instructionTable[station.instructionTableIndex!].end_execution ===
         newState.clockCycle
       ) {
+        continue;
+      }
+      if (station.op === Instructions.BEQ || station.op === Instructions.BNE) {
+        newState.instructionTable[station.instructionTableIndex!].writeResult = newState.clockCycle;
+        removeInstructionFromStation(station);
         continue;
       }
       candidates.push(station);
@@ -120,14 +126,25 @@ export function writeBack(newState: SystemState) {
       station.vk = newState.CDB.value;
     }
   });
+
   newState.storeBuffer.forEach((station) => {
-    if (station.q === newState.CDB.tag) {
-      station.q = "0";
+    if (station.qj === newState.CDB.tag) {
+      station.qj = "0";
       station.v = newState.CDB.value;
+    }
+    if (station.qk === newState.CDB.tag) {
+      station.qk = "0";
+      station.address = newState.CDB.value;
     }
   });
 
-  newState.intRegisterFile.forEach((register, index) => {
+  newState.loadBuffer.forEach((station) => {
+    if (station.q === newState.CDB.tag) {
+      station.q = "0";
+      station.address = newState.CDB.value;
+    }
+  });
+  newState.intRegisterFile.forEach((register) => {
     if (register.Q === newState.CDB.tag) {
       register.value = newState.CDB.value;
       register.Q = "0";

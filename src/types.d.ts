@@ -27,6 +27,7 @@ export interface LoadBuffer {
   tag: string;
   busy: boolean;
   op: string;
+  q: string;
   address: number;
   timeRemaining?: number;
   result?: number;
@@ -39,7 +40,8 @@ export interface StoreBuffer {
   op: string;
   address: number;
   v: number;
-  q: string;
+  qj: string;
+  qk: string;
   timeRemaining?: number;
   instructionTableIndex?: number;
 }

@@ -32,6 +32,9 @@ export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
                 Opcode
               </TableCell>
               <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Q
+              </TableCell>
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Address
               </TableCell>
               <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
@@ -45,6 +48,7 @@ export const LoadBufferView: React.FC<LoadBufferProps> = ({ loadbuffer }) => {
                 <TableCell align="center">{buffer.tag}</TableCell>
                 <TableCell align="center">{buffer.busy ? 1 : 0}</TableCell>
                 <TableCell align="center">{buffer.op}</TableCell>
+                <TableCell align="center">{buffer.q}</TableCell>
                 <TableCell align="center">{buffer.address}</TableCell>
                 <TableCell align="center">{buffer.timeRemaining}</TableCell>
               </TableRow>

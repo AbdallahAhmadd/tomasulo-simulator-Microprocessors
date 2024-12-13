@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { StoreBuffer } from "../../types";
 
 import {
@@ -30,13 +29,16 @@ export const StoreBufferView: React.FC<StoreBufferprops> = ({ storebuffer }) => 
                 Busy
               </TableCell>
               <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Vj
+              </TableCell>
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Qj
+              </TableCell>
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
+                Qk
+              </TableCell>
+              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Address
-              </TableCell>
-              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
-                V
-              </TableCell>
-              <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
-                Q
               </TableCell>
               <TableCell align="center" sx={{ backgroundColor: "#000", color: "#fff" }}>
                 Time Remaining
@@ -48,9 +50,10 @@ export const StoreBufferView: React.FC<StoreBufferprops> = ({ storebuffer }) => 
               <TableRow key={index}>
                 <TableCell align="center">{row.tag}</TableCell>
                 <TableCell align="center">{row.busy ? 1 : 0}</TableCell>
-                <TableCell align="center">{row.address}</TableCell>
                 <TableCell align="center">{row.v}</TableCell>
-                <TableCell align="center">{row.q}</TableCell>
+                <TableCell align="center">{row.qj}</TableCell>
+                <TableCell align="center">{row.qk}</TableCell>
+                <TableCell align="center">{row.address}</TableCell>
                 <TableCell align="center">{row.timeRemaining}</TableCell>
               </TableRow>
             ))}
