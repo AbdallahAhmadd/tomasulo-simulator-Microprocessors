@@ -80,64 +80,66 @@ function App() {
   const [showExecutionPage, setShowExecutionPage] = useState(false);
 
   const handleExecution = () => {
-    // if (!latencies) {
-    //   toast.error("Please provide latency values.");
-    //   return;
-    // }
-    // const SystemConfig: SystemConfig = {
-    //   fpAddReservationStationsSize: fpAddReservationStationsNums,
-    //   fpMulReservationStationsSize: fpMulReservationStationsNums,
-    //   intAddReservationStationsSize: intAddReservationStationsNums,
-    //   intMulReservationStationsSize: intMulReservationStationsNums,
-    //   fpRegisterFileSize,
-    //   intRegisterFileSize,
-    //   loadBufferSize,
-    //   storeBufferSize,
-    //   cacheSize,
-    //   blockSize,
-    //   latencies,
-    // };
+    if (!latencies) {
+      toast.error("Please provide latency values.");
+      return;
+    }
     const SystemConfig: SystemConfig = {
-      fpAddReservationStationsSize: 2,
-      fpMulReservationStationsSize: 2,
-      intAddReservationStationsSize: 2,
-      fpRegisterFileSize: 12,
-      intRegisterFileSize: 12,
-      loadBufferSize: 2,
-      storeBufferSize: 2,
-      cacheSize: 128,
-      blockSize: 32,
-      latencies: {
-        ADD_D: 2,
-        ADD_S: 2,
-        BNE: 2,
-        BEQ: 2,
-        DADDI: 2,
-        DSUBI: 2,
-        DIV_D: 2,
-        DIV_S: 2,
-        LD: 2,
-        LW: 2,
-        L_S: 2,
-        L_D: 2,
-        MUL_D: 2,
-        MUL_S: 2,
-        SD: 2,
-        S_S: 2,
-        S_D: 2,
-        SUB_D: 2,
-        SUB_S: 2,
-        SW: 2,
-      },
+      fpAddReservationStationsSize: fpAddReservationStationsNums,
+      fpMulReservationStationsSize: fpMulReservationStationsNums,
+      intAddReservationStationsSize: intAddReservationStationsNums,
+      fpRegisterFileSize,
+      intRegisterFileSize,
+      loadBufferSize,
+      storeBufferSize,
+      cacheSize,
+      blockSize,
+      latencies,
     };
+    // const SystemConfig: SystemConfig = {
+    //   fpAddReservationStationsSize: 2,
+    //   fpMulReservationStationsSize: 2,
+    //   intAddReservationStationsSize: 2,
+    //   fpRegisterFileSize: 12,
+    //   intRegisterFileSize: 12,
+    //   loadBufferSize: 7,
+    //   storeBufferSize: 2,
+    //   cacheSize: 128,
+    //   blockSize: 32,
+    //   latencies: {
+    //     ADD_D: 3,
+    //     ADD_S: 2,
+    //     BNE: 2,
+    //     BEQ: 2,
+    //     DADDI: 2,
+    //     DSUBI: 2,
+    //     DIV_D: 2,
+    //     DIV_S: 2,
+    //     LD: 2,
+    //     LW: 2,
+    //     L_S: 2,
+    //     L_D: 2,
+    //     MUL_D: 2,
+    //     MUL_S: 2,
+    //     SD: 2,
+    //     S_S: 2,
+    //     S_D: 2,
+    //     SUB_D: 2,
+    //     SUB_S: 2,
+    //     SW: 2,
+    //   },
+    // };
     const sysState = initializeSystem(instructionQueue, SystemConfig);
-    //for testing purposes only
-    sysState.memory.write(24, 7.5, 8, true);
-    sysState.memory.write(0, 2, 8, false);
-    for (let i = 0; i < 12; i++) {
+    console.log("System state", sysState);
+    //for testing purposes only (populating memory and registers)
+    sysState.memory.write(24, 6.5, 8, true);
+    sysState.memory.write(16, 5.5, 8, true);
+    sysState.memory.write(8, 4.5, 8, true);
+    sysState.memory.write(0, 3.5, 8, true);
+    for (let i = 0; i < 11; i++) {
       sysState.fpRegisterFile[i].value = i * 1.5;
     }
-    for (let i = 0; i < 12; i++) {
+    for (let i = 3; i < 11; i++) {
       sysState.intRegisterFile[i].value = i;
     }
     setSystemState(sysState);

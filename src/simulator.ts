@@ -60,11 +60,11 @@ export function nextSystemState(systemState: SystemState): SystemState {
 
   issueInstruction(newState);
 
-  console.log("State after issuing", newState);
+  //   console.log("State after issuing", newState);
 
   execute(newState);
 
-  console.log("State after executing", newState);
+  //   console.log("State after executing", newState);
 
   writeBack(newState);
 
@@ -84,4 +84,11 @@ However, this is not a problem since this is only a simulation and whoever will 
 In real life, this happens all at the same time not one after the other.
 To avoid this problem, I could have called the writeBack function first, then the execute function and then the issue function,
 but I tested the first option so many times so I don't want to change it now.
+*/
+
+/*
+My assumption on cache misses:
+My implementation handles any cache miss (not only the compulsory cache miss).
+I assume that when the compulsory miss happens, all loads issued after the miss will have to wait for the miss to be resolved.
+The miss latency will be added to each of their latencies.
 */
