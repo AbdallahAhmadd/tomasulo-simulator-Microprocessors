@@ -79,6 +79,7 @@ export function execute(newState: SystemState) {
           newState.clockCycle + latency - 1;
       }
       if (station.timeRemaining == 1) {
+        newState.notes.push(`executing ${station.op}`);
         console.log(`Executing instruction at int Add station ${index}`);
         const value1 = station.vj;
         const value2 = station.vk;

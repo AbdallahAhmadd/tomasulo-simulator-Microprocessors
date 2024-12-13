@@ -35,16 +35,19 @@ export function issueInstruction(systemState: SystemState): void {
     intRegisterFile,
     pc,
     clockCycle,
+    notes,
   } = systemState;
 
   if (checkBranch(systemState)) {
     console.log(
       "Branch instruction is being issued or executed. Stopping issue of new instructions.",
     );
+    notes.push("Branch instruction is being issued or executed. Stopping issue of new instructions.");
     return;
   }
   if (pc >= instructionQueue.length) {
     console.log("Issued All instructions");
+    notes.push("Issued All Instructions");
     return;
   }
 
@@ -211,6 +214,7 @@ export function issueInstruction(systemState: SystemState): void {
   //=================================================================================================================//
   console.log(issued);
   if (issued) {
+    notes.push(`${opcode} is issued`);
     const updatedInstructionTable = [...systemState.instructionTable];
     updatedInstructionTable.push({
       instruction: currentInstruction,
