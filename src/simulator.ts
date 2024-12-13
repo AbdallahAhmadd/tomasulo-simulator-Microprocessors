@@ -49,7 +49,7 @@ export function initializeSystem(instructionQueue: string[], config: SystemConfi
 }
 
 export function nextSystemState(systemState: SystemState): SystemState {
-  const newState = structuredClone(systemState);
+  const newState: SystemState = { ...systemState };
 
   newState.notes = [];
   newState.clockCycle++;
@@ -58,7 +58,7 @@ export function nextSystemState(systemState: SystemState): SystemState {
 
   execute(newState);
 
-  writeBack(newState);
+  //   writeBack(newState);
 
   console.log(newState);
 
