@@ -1,9 +1,8 @@
 import { SystemConfig, SystemState } from "./types";
 import {
-  initializeAddStations,
   initializeLoadBuffer,
-  initializeMulStations,
   initializeRegisterFile,
+  initializeReservationStations,
   initializeStoreBuffer,
   parseInstructions,
 } from "./helpers";
@@ -18,7 +17,6 @@ export function initializeSystem(instructionQueue: string[], config: SystemConfi
     fpAddReservationStationsSize,
     fpMulReservationStationsSize,
     intAddReservationStationsSize,
-    intMulReservationStationsSize,
     fpRegisterFileSize,
     intRegisterFileSize,
     loadBufferSize,
@@ -29,10 +27,9 @@ export function initializeSystem(instructionQueue: string[], config: SystemConfi
   } = config;
   return {
     instructionQueue: parseInstructions(instructionQueue),
-    fpAddReservationStations: initializeAddStations(fpAddReservationStationsSize),
-    fpMulReservationStations: initializeMulStations(fpMulReservationStationsSize),
-    intAddReservationStations: initializeAddStations(intAddReservationStationsSize),
-    intMulReservationStations: initializeMulStations(intMulReservationStationsSize),
+    fpAddReservationStations: initializeReservationStations(fpAddReservationStationsSize, "A"),
+    fpMulReservationStations: initializeReservationStations(fpMulReservationStationsSize, "M"),
+    intAddReservationStations: initializeReservationStations(intAddReservationStationsSize, "I"),
     loadBuffer: initializeLoadBuffer(loadBufferSize),
     storeBuffer: initializeStoreBuffer(storeBufferSize),
     fpRegisterFile: initializeRegisterFile(fpRegisterFileSize, "F"),
@@ -54,11 +51,17 @@ export function nextSystemState(systemState: SystemState): SystemState {
   newState.notes = [];
   newState.clockCycle++;
 
+  console.log("Clock Cycle", newState.clockCycle);
+
   issueInstruction(newState);
+
+  console.log("State after issuing", newState);
 
   execute(newState);
 
-  //   writeBack(newState);
+  console.log("State after executing", newState);
+
+  writeBack(newState);
 
   console.log(newState);
 

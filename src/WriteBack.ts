@@ -1,31 +1,52 @@
-import { LoadBuffer, ReservationStation, SystemState } from "./types";
+import { LoadBuffer, ReservationStation, StoreBuffer, SystemState } from "./types";
 
+function removeInstructionFromStation(station: LoadBuffer | ReservationStation | StoreBuffer) {
+  station.busy = false;
+  delete station.timeRemaining;
+  delete station.instructionTableIndex;
+}
 export function writeBack(newState: SystemState) {
   //check if there is any instruction that is ready to be written and push it in an array
   let candidates: any[] = [];
-  newState.fpAddReservationStations.forEach((station, index) => {
-    if (station.busy && station.timeRemaining === 0 && station.result) {
-      candidates.push(station);
-    }
-  });
 
-  newState.fpMulReservationStations.forEach((station, index) => {
-    if (station.busy && station.timeRemaining === 0 && station.result) {
+  for (let i = 0; i < newState.fpAddReservationStations.length; i++) {
+    const station = newState.fpAddReservationStations[i];
+    if (station.busy === true && station.result !== undefined) {
+      if (
+        newState.instructionTable[station.instructionTableIndex!].end_execution ===
+        newState.clockCycle
+      ) {
+        continue;
+      }
       candidates.push(station);
     }
-  });
+  }
 
-  newState.intAddReservationStations.forEach((station, index) => {
-    if (station.busy && station.timeRemaining === 0 && station.result) {
+  for (let i = 0; i < newState.fpMulReservationStations.length; i++) {
+    const station = newState.fpMulReservationStations[i];
+    if (station.busy === true && station.result !== undefined) {
+      if (
+        newState.instructionTable[station.instructionTableIndex!].end_execution ===
+        newState.clockCycle
+      ) {
+        continue;
+      }
       candidates.push(station);
     }
-  });
+  }
 
-  newState.loadBuffer.forEach((station, index) => {
-    if (station.busy && station.timeRemaining === 0 && station.result) {
+  for (let i = 0; i < newState.intAddReservationStations.length; i++) {
+    const station = newState.intAddReservationStations[i];
+    if (station.busy === true && station.result !== undefined) {
+      if (
+        newState.instructionTable[station.instructionTableIndex!].end_execution ===
+        newState.clockCycle
+      ) {
+        continue;
+      }
       candidates.push(station);
     }
-  });
+  }
 
   //if there is no instruction to be written return
   if (candidates.length === 0) return;
@@ -34,57 +55,54 @@ export function writeBack(newState: SystemState) {
 
   if (toBeWrttenStation.result !== undefined) {
     newState.CDB = { tag: toBeWrttenStation.tag, value: toBeWrttenStation.result };
+    newState.instructionTable[toBeWrttenStation.instructionTableIndex!].writeResult =
+      newState.clockCycle;
+    removeInstructionFromStation(toBeWrttenStation);
   }
 
-  //update register file
+  newState.fpRegisterFile.forEach((register, index) => {
+    if (register.Q === newState.CDB.tag) {
+      register.value = newState.CDB.value;
+      register.Q = "0";
+    }
+  });
+  newState.fpAddReservationStations.forEach((station) => {
+    if (station.qj === newState.CDB.tag) {
+      station.qj = "0";
+      station.vj = newState.CDB.value;
+    }
+    if (station.qk === newState.CDB.tag) {
+      station.qk = "0";
+      station.vk = newState.CDB.value;
+    }
+  });
+  newState.fpMulReservationStations.forEach((station) => {
+    if (station.qj === newState.CDB.tag) {
+      station.qj = "0";
+      station.vj = newState.CDB.value;
+    }
+    if (station.qk === newState.CDB.tag) {
+      station.qk = "0";
+      station.vk = newState.CDB.value;
+    }
+  });
 
-  if (newState.CDB.tag.startsWith("F")) {
-    newState.fpRegisterFile.forEach((register, index) => {
-      if (register.Q === newState.CDB.tag) {
-        register.value = newState.CDB.value;
-        register.Q = "0";
-      }
-    });
-    newState.fpAddReservationStations.forEach((station) => {
-      if (station.qj === newState.CDB.tag) {
-        station.qj = "0";
-        station.vj = newState.CDB.value;
-      }
-      if (station.qk === newState.CDB.tag) {
-        station.qk = "0";
-        station.vk = newState.CDB.value;
-      }
-    });
-    newState.fpMulReservationStations.forEach((station) => {
-      if (station.qj === newState.CDB.tag) {
-        station.qj = "0";
-        station.vj = newState.CDB.value;
-      }
-      if (station.qk === newState.CDB.tag) {
-        station.qk = "0";
-        station.vk = newState.CDB.value;
-      }
-    });
-  }
-
-  if (newState.CDB.tag.startsWith("R")) {
-    newState.intRegisterFile.forEach((register, index) => {
-      if (register.Q === newState.CDB.tag) {
-        register.value = newState.CDB.value;
-        register.Q = "0";
-      }
-    });
-    newState.intAddReservationStations.forEach((station) => {
-      if (station.qj === newState.CDB.tag) {
-        station.qj = "0";
-        station.vj = newState.CDB.value;
-      }
-      if (station.qk === newState.CDB.tag) {
-        station.qk = "0";
-        station.vk = newState.CDB.value;
-      }
-    });
-  }
+  newState.intRegisterFile.forEach((register, index) => {
+    if (register.Q === newState.CDB.tag) {
+      register.value = newState.CDB.value;
+      register.Q = "0";
+    }
+  });
+  newState.intAddReservationStations.forEach((station) => {
+    if (station.qj === newState.CDB.tag) {
+      station.qj = "0";
+      station.vj = newState.CDB.value;
+    }
+    if (station.qk === newState.CDB.tag) {
+      station.qk = "0";
+      station.vk = newState.CDB.value;
+    }
+  });
 }
 
 export function getReservationStationWithHighestDependencies(

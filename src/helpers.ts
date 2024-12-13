@@ -74,23 +74,13 @@ export const initializeStoreBuffer = (size: number): StoreBuffer[] => {
   }));
 };
 
-export const initializeAddStations = (size: number): ReservationStation[] => {
+export const initializeReservationStations = (
+  size: number,
+  tagLetter: string,
+): ReservationStation[] => {
   return Array.from({ length: size }, (_, i) => ({
     busy: false,
-    tag: `A${i + 1}`,
-    op: "",
-    vj: 0,
-    vk: 0,
-    qj: "0",
-    qk: "0",
-    A: 0,
-  }));
-};
-
-export const initializeMulStations = (size: number): ReservationStation[] => {
-  return Array.from({ length: size }, (_, i) => ({
-    busy: false,
-    tag: `M${i + 1}`,
+    tag: `${tagLetter}${i + 1}`,
     op: "",
     vj: 0,
     vk: 0,

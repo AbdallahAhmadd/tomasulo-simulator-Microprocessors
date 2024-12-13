@@ -1,4 +1,3 @@
-import { InstructionTable } from "./components/viewOutput/InstructionsTable";
 import { Instructions } from "./enums";
 import { mapOpToLatencyKey } from "./helpers";
 import { SystemState } from "./types";
@@ -26,7 +25,7 @@ export function AluOperation(value1: number, value2: number, operation: string):
 
 export function execute(newState: SystemState) {
   newState.fpAddReservationStations.forEach((station, index) => {
-    if (station.busy && station.qj !== "0" && station.qk !== "0") {
+    if (station.busy && station.qj === "0" && station.qk === "0") {
       if (newState.instructionTable[station.instructionTableIndex!].issue == newState.clockCycle)
         return;
       if (station.timeRemaining === undefined) {
@@ -37,18 +36,17 @@ export function execute(newState: SystemState) {
         newState.instructionTable[station.instructionTableIndex!].end_execution =
           newState.clockCycle + latency - 1;
       }
-      if (station.timeRemaining == 0) {
+      if (station.timeRemaining == 1) {
         const value1 = station.vj;
         const value2 = station.vk;
         station.result = AluOperation(value1, value2, station.op);
-      } else {
-        station.timeRemaining!--;
       }
+      station.timeRemaining!--;
     }
   });
 
   newState.fpMulReservationStations.forEach((station, index) => {
-    if (station.busy && station.qj !== "0" && station.qk !== "0") {
+    if (station.busy && station.qj === "0" && station.qk === "0") {
       if (newState.instructionTable[station.instructionTableIndex!].issue == newState.clockCycle)
         return;
       if (station.timeRemaining === undefined) {
@@ -59,18 +57,17 @@ export function execute(newState: SystemState) {
         newState.instructionTable[station.instructionTableIndex!].end_execution =
           newState.clockCycle + latency - 1;
       }
-      if (station.timeRemaining == 0) {
+      if (station.timeRemaining == 1) {
         const value1 = station.vj;
         const value2 = station.vk;
         station.result = AluOperation(value1, value2, station.op);
-      } else {
-        station.timeRemaining!--;
       }
+      station.timeRemaining!--;
     }
   });
 
   newState.intAddReservationStations.forEach((station, index) => {
-    if (station.busy && station.qj !== "0" && station.qk !== "0") {
+    if (station.busy && station.qj === "0" && station.qk === "0") {
       if (newState.instructionTable[station.instructionTableIndex!].issue == newState.clockCycle)
         return;
       if (station.timeRemaining === undefined) {
@@ -81,7 +78,7 @@ export function execute(newState: SystemState) {
         newState.instructionTable[station.instructionTableIndex!].end_execution =
           newState.clockCycle + latency - 1;
       }
-      if (station.timeRemaining == 0) {
+      if (station.timeRemaining == 1) {
         console.log(`Executing instruction at int Add station ${index}`);
         const value1 = station.vj;
         const value2 = station.vk;
@@ -89,14 +86,13 @@ export function execute(newState: SystemState) {
           station.result = AluOperation(value1, value2, Instructions.SUB_D);
           if (station.result === 0) newState.pc = station.A;
         } else station.result = AluOperation(value1, value2, station.op);
-      } else {
-        station.timeRemaining!--;
       }
+      station.timeRemaining!--;
     }
   });
-
-  newState.loadBuffer.forEach((buffer, index) => {
-    if (buffer.busy) {
+  for (let i = 0; i < newState.loadBuffer.length; i++) {
+    const buffer = newState.loadBuffer[i];
+    if (buffer.busy == true) {
       if (newState.instructionTable[buffer.instructionTableIndex!].issue == newState.clockCycle)
         return;
       if (buffer.timeRemaining === undefined) {
@@ -105,13 +101,14 @@ export function execute(newState: SystemState) {
         newState.instructionTable[buffer.instructionTableIndex!].start_execution =
           newState.clockCycle;
       }
-      if (buffer.timeRemaining === 0) {
+      if (buffer.timeRemaining === 1) {
         switch (buffer.op) {
           case Instructions.LW:
             try {
               buffer.result = newState.cache.read(buffer.address, 4, newState.memory, false);
               newState.instructionTable[buffer.instructionTableIndex!].end_execution =
                 newState.clockCycle;
+              buffer.timeRemaining = 0;
             } catch (error) {
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -121,6 +118,7 @@ export function execute(newState: SystemState) {
               buffer.result = newState.cache.read(buffer.address, 8, newState.memory, false);
               newState.instructionTable[buffer.instructionTableIndex!].end_execution =
                 newState.clockCycle;
+              buffer.timeRemaining = 0;
             } catch (error) {
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -130,6 +128,7 @@ export function execute(newState: SystemState) {
               buffer.result = newState.cache.read(buffer.address, 4, newState.memory, true);
               newState.instructionTable[buffer.instructionTableIndex!].end_execution =
                 newState.clockCycle;
+              buffer.timeRemaining = 0;
             } catch (error) {
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -139,9 +138,8 @@ export function execute(newState: SystemState) {
               buffer.result = newState.cache.read(buffer.address, 8, newState.memory, true);
               newState.instructionTable[buffer.instructionTableIndex!].end_execution =
                 newState.clockCycle;
+              buffer.timeRemaining = 0;
             } catch (error) {
-              console.log("Error in L_D");
-              console.log(error.message);
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
             break;
@@ -152,7 +150,7 @@ export function execute(newState: SystemState) {
         buffer.timeRemaining!--;
       }
     }
-  });
+  }
 
   newState.storeBuffer.forEach((buffer, index) => {
     if (buffer.busy && buffer.q === "0") {
@@ -166,7 +164,7 @@ export function execute(newState: SystemState) {
         newState.instructionTable[buffer.instructionTableIndex!].end_execution =
           newState.clockCycle + latency - 1;
       }
-      if (buffer.timeRemaining === 0) {
+      if (buffer.timeRemaining === 1) {
         switch (buffer.op) {
           case Instructions.SW:
             newState.cache.write(buffer.address, buffer.v, 4, false);
@@ -183,9 +181,8 @@ export function execute(newState: SystemState) {
           default:
             throw new Error(`Unsupported operation: ${buffer.op}`);
         }
-      } else {
-        buffer.timeRemaining!--;
       }
+      buffer.timeRemaining!--;
     }
   });
 }

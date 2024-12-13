@@ -91,7 +91,6 @@ export interface SystemState {
   fpAddReservationStations: ReservationStation[];
   fpMulReservationStations: ReservationStation[];
   intAddReservationStations: ReservationStation[];
-  intMulReservationStations: ReservationStation[];
   loadBuffer: LoadBuffer[];
   storeBuffer: StoreBuffer[];
   fpRegisterFile: registerFileEntry[];
@@ -111,7 +110,6 @@ export interface SystemConfig {
   fpAddReservationStationsSize: number;
   fpMulReservationStationsSize: number;
   intAddReservationStationsSize: number;
-  intMulReservationStationsSize: number;
   fpRegisterFileSize: number;
   intRegisterFileSize: number;
   loadBufferSize: number;

@@ -36,8 +36,6 @@ export class DMappedCache {
   }
 
   public read(address: number, bytesNumber: number, memory: Memory, fp: boolean): number {
-    this.validateAccessAlignment(bytesNumber, address);
-
     const binaryAddress = address.toString(2).padStart(10, "0");
 
     const { index, tag, offset } = this.decodeCacheAddress(binaryAddress);
@@ -67,23 +65,6 @@ export class DMappedCache {
     }
   }
 
-  private validateAccessAlignment(bytesNumber: number, address: number) {
-    if (bytesNumber <= 0) {
-      throw new Error(`Invalid bytesNumber: ${bytesNumber}. Must be greater than 0.`);
-    }
-
-    if (bytesNumber === 2 && address % 2 !== 0) {
-      // Half word (2 bytes)
-      throw new Error(`Address ${address} is not aligned for half word access.`);
-    } else if (bytesNumber === 4 && address % 4 !== 0) {
-      // Word (4 bytes)
-      throw new Error(`Address ${address} is not aligned for word access.`);
-    } else if (bytesNumber === 8 && address % 8 !== 0) {
-      // Double word (8 bytes)
-      throw new Error(`Address ${address} is not aligned for double word access.`);
-    }
-  }
-
   private decodeCacheAddress(binaryAddress: string) {
     const offsetBits = Math.log2(this.blockSize);
     const indexBits = Math.log2(Math.floor(this.cacheSize / this.blockSize));
@@ -95,8 +76,6 @@ export class DMappedCache {
   }
 
   public write(address: number, data: number, bytesNumber: number, fp: boolean): void {
-    this.validateAccessAlignment(bytesNumber, address);
-
     const binaryAddress = address.toString(2).padStart(10, "0");
 
     const { index, tag, offset } = this.decodeCacheAddress(binaryAddress);
