@@ -29,7 +29,7 @@ export function execute(newState: SystemState) {
     if (station.busy && station.qj !== "0" && station.qk !== "0") {
       if (newState.instructionTable[station.instructionTableIndex!].issue == newState.clockCycle)
         return;
-      if (!station.timeRemaining) {
+      if (station.timeRemaining === undefined) {
         const latency = newState.latencies[mapOpToLatencyKey(station.op as Instructions)];
         station.timeRemaining = latency;
         newState.instructionTable[station.instructionTableIndex!].start_execution =
@@ -51,7 +51,7 @@ export function execute(newState: SystemState) {
     if (station.busy && station.qj !== "0" && station.qk !== "0") {
       if (newState.instructionTable[station.instructionTableIndex!].issue == newState.clockCycle)
         return;
-      if (!station.timeRemaining) {
+      if (station.timeRemaining === undefined) {
         const latency = newState.latencies[mapOpToLatencyKey(station.op as Instructions)];
         station.timeRemaining = latency;
         newState.instructionTable[station.instructionTableIndex!].start_execution =
@@ -73,7 +73,7 @@ export function execute(newState: SystemState) {
     if (station.busy && station.qj !== "0" && station.qk !== "0") {
       if (newState.instructionTable[station.instructionTableIndex!].issue == newState.clockCycle)
         return;
-      if (!station.timeRemaining) {
+      if (station.timeRemaining === undefined) {
         const latency = newState.latencies[mapOpToLatencyKey(station.op as Instructions)];
         station.timeRemaining = latency;
         newState.instructionTable[station.instructionTableIndex!].start_execution =
@@ -97,21 +97,21 @@ export function execute(newState: SystemState) {
 
   newState.loadBuffer.forEach((buffer, index) => {
     if (buffer.busy) {
-      if (!buffer.timeRemaining) {
-        if (newState.instructionTable[buffer.instructionTableIndex!].issue == newState.clockCycle)
-          return;
+      if (newState.instructionTable[buffer.instructionTableIndex!].issue == newState.clockCycle)
+        return;
+      if (buffer.timeRemaining === undefined) {
         const latency = newState.latencies[mapOpToLatencyKey(buffer.op as Instructions)];
         buffer.timeRemaining = latency;
         newState.instructionTable[buffer.instructionTableIndex!].start_execution =
           newState.clockCycle;
-        newState.instructionTable[buffer.instructionTableIndex!].end_execution =
-          newState.clockCycle + latency - 1;
       }
       if (buffer.timeRemaining === 0) {
         switch (buffer.op) {
           case Instructions.LW:
             try {
               buffer.result = newState.cache.read(buffer.address, 4, newState.memory, false);
+              newState.instructionTable[buffer.instructionTableIndex!].end_execution =
+                newState.clockCycle;
             } catch (error) {
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -119,6 +119,8 @@ export function execute(newState: SystemState) {
           case Instructions.LD:
             try {
               buffer.result = newState.cache.read(buffer.address, 8, newState.memory, false);
+              newState.instructionTable[buffer.instructionTableIndex!].end_execution =
+                newState.clockCycle;
             } catch (error) {
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -126,6 +128,8 @@ export function execute(newState: SystemState) {
           case Instructions.L_S:
             try {
               buffer.result = newState.cache.read(buffer.address, 4, newState.memory, true);
+              newState.instructionTable[buffer.instructionTableIndex!].end_execution =
+                newState.clockCycle;
             } catch (error) {
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -133,7 +137,11 @@ export function execute(newState: SystemState) {
           case Instructions.L_D:
             try {
               buffer.result = newState.cache.read(buffer.address, 8, newState.memory, true);
+              newState.instructionTable[buffer.instructionTableIndex!].end_execution =
+                newState.clockCycle;
             } catch (error) {
+              console.log("Error in L_D");
+              console.log(error.message);
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
             break;
@@ -148,9 +156,9 @@ export function execute(newState: SystemState) {
 
   newState.storeBuffer.forEach((buffer, index) => {
     if (buffer.busy && buffer.q === "0") {
-      if (!buffer.timeRemaining) {
-        if (newState.instructionTable[buffer.instructionTableIndex!].issue == newState.clockCycle)
-          return;
+      if (newState.instructionTable[buffer.instructionTableIndex!].issue == newState.clockCycle)
+        return;
+      if (buffer.timeRemaining === undefined) {
         const latency = newState.latencies[mapOpToLatencyKey(buffer.op as Instructions)];
         buffer.timeRemaining = latency;
         newState.instructionTable[buffer.instructionTableIndex!].start_execution =
