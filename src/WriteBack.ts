@@ -184,7 +184,11 @@ export function getReservationStationWithHighestDependencies(
     });
 
     newState.storeBuffer.forEach((station) => {
-      if (station.q === instruction.tag) counts[index]++;
+      if (station.qj === instruction.tag || station.qk === instruction.tag) counts[index]++;
+
+    });
+    newState.loadBuffer.forEach((station) => {
+      if (station.q === instruction.tag ) counts[index]++;
     });
   });
 
