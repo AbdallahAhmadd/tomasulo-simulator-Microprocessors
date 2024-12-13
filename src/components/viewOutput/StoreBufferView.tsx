@@ -47,7 +47,7 @@ export const StoreBufferView: React.FC<StoreBufferprops> = ({ storebuffer }) => 
             {storebuffer.map((row, index) => (
               <TableRow key={index}>
                 <TableCell align="center">{row.tag}</TableCell>
-                <TableCell align="center">{row.busy}</TableCell>
+                <TableCell align="center">{row.busy ? 1 : 0}</TableCell>
                 <TableCell align="center">{row.address}</TableCell>
                 <TableCell align="center">{row.v}</TableCell>
                 <TableCell align="center">{row.q}</TableCell>

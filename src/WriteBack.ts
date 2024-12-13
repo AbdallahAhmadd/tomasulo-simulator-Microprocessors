@@ -61,6 +61,19 @@ export function writeBack(newState: SystemState) {
     }
   }
 
+  for (let i = 0; i < newState.storeBuffer.length; i++) {
+    const buffer = newState.storeBuffer[i];
+    if (buffer.busy == true && buffer.timeRemaining == 0) {
+      if (
+        newState.instructionTable[buffer.instructionTableIndex!].end_execution ===
+        newState.clockCycle
+      ) {
+        continue;
+      }
+      newState.instructionTable[buffer.instructionTableIndex!].writeResult = newState.clockCycle;
+      removeInstructionFromStation(buffer);
+    }
+  }
   console.log("Candidates: ", candidates);
   //if there is no instruction to be written return
   if (candidates.length === 0) return;
@@ -99,6 +112,12 @@ export function writeBack(newState: SystemState) {
     if (station.qk === newState.CDB.tag) {
       station.qk = "0";
       station.vk = newState.CDB.value;
+    }
+  });
+  newState.storeBuffer.forEach((station) => {
+    if (station.q === newState.CDB.tag) {
+      station.q = "0";
+      station.v = newState.CDB.value;
     }
   });
 

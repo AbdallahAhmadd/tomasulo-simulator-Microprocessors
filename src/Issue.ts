@@ -190,10 +190,11 @@ export function issueInstruction(systemState: SystemState): void {
       const availableSlot = storeBuffer.find((sb) => !sb.busy);
       if (availableSlot) {
         availableSlot.busy = true;
+        availableSlot.op = opcode;
         availableSlot.address = parseInt(rs);
-        if (isRegisterAvailable(rt, fpRegisterFile))
-          availableSlot.v = getRegisterValue(rt, fpRegisterFile);
-        availableSlot.q = getRegisterTag(rt, fpRegisterFile);
+        if (isRegisterAvailable(rd, fpRegisterFile))
+          availableSlot.v = getRegisterValue(rd, fpRegisterFile);
+        availableSlot.q = getRegisterTag(rd, fpRegisterFile);
         availableSlot.tag = `S${storeBuffer.indexOf(availableSlot) + 1}`;
         availableSlot.instructionTableIndex = systemState.instructionTable.length;
         issued = true;
