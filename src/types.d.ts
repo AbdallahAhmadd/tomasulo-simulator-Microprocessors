@@ -32,6 +32,7 @@ export interface LoadBuffer {
   timeRemaining?: number;
   result?: number;
   instructionTableIndex?: number;
+  latencyAdded?: boolean;
 }
 
 export interface StoreBuffer {

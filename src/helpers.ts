@@ -61,6 +61,7 @@ export const initializeLoadBuffer = (size: number): LoadBuffer[] => {
     op: "",
     q: "0",
     address: 0,
+    latencyAdded: false,
   }));
 };
 
@@ -72,7 +73,7 @@ export const initializeStoreBuffer = (size: number): StoreBuffer[] => {
     v: 0,
     qj: "0",
     qk: "0",
-    address: 0
+    address: 0,
   }));
 };
 

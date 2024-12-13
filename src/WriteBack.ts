@@ -8,6 +8,9 @@ function removeInstructionFromStation(station: LoadBuffer | ReservationStation |
   if ("result" in station) {
     delete station.result;
   }
+  if ("latencyAdded" in station) {
+    delete station.latencyAdded;
+  }
 }
 export function writeBack(newState: SystemState) {
   //check if there is any instruction that is ready to be written and push it in an array

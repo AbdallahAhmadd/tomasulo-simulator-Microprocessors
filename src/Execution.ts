@@ -135,12 +135,23 @@ export function execute(newState: SystemState) {
         return;
       if (buffer.timeRemaining === undefined) {
         const latency = newState.latencies[mapOpToLatencyKey(buffer.op as Instructions)];
-        buffer.timeRemaining = latency + newState.cacheMissLatency;
+        buffer.timeRemaining = latency;
+        if (newState.cacheMissLatency > 0) {
+          buffer.latencyAdded = true;
+          buffer.timeRemaining += 2;
+        }
         newState.instructionTable[buffer.instructionTableIndex!].start_execution =
           newState.clockCycle;
         newState.notes.push(
           `Instruction ${buffer.op} at L${i + 1} started execution at cycle ${newState.clockCycle}.`,
         );
+      }
+      // console.log("Cache Miss Latency: ", newState.cacheMissLatency);
+      // console.log("Buffer Latency Added: ", buffer.latencyAdded);
+      // console.log("reservationStation: ", buffer);
+      if (newState.cacheMissLatency > 0 && buffer.latencyAdded === false) {
+        buffer.timeRemaining += 2;
+        buffer.latencyAdded = true;
       }
       if (buffer.timeRemaining === 1) {
         switch (buffer.op) {
@@ -156,6 +167,7 @@ export function execute(newState: SystemState) {
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
               newState.cacheMissLatency = 2;
+              buffer.latencyAdded = true;
             }
             break;
           case Instructions.LD:
@@ -170,6 +182,7 @@ export function execute(newState: SystemState) {
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
               newState.cacheMissLatency = 2;
+              buffer.latencyAdded = true;
             }
             break;
           case Instructions.L_S:
@@ -178,12 +191,14 @@ export function execute(newState: SystemState) {
               newState.instructionTable[buffer.instructionTableIndex!].end_execution =
                 newState.clockCycle;
               buffer.timeRemaining = 0;
+              buffer.latencyAdded = true;
             } catch (error) {
               newState.notes.push(
                 `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Cache miss latency is extra 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
               newState.cacheMissLatency = 2;
+              buffer.latencyAdded = true;
             }
             break;
           case Instructions.L_D:
@@ -201,6 +216,7 @@ export function execute(newState: SystemState) {
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
               newState.cacheMissLatency = 2;
+              buffer.latencyAdded = true;
             }
             break;
           default:
