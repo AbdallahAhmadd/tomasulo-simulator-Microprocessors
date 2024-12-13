@@ -106,6 +106,7 @@ export interface SystemState {
   pc: number;
   latencies: latencies;
   notes: string[];
+  cacheMissLatency: number;
 }
 
 export interface SystemConfig {

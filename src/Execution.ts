@@ -135,7 +135,7 @@ export function execute(newState: SystemState) {
         return;
       if (buffer.timeRemaining === undefined) {
         const latency = newState.latencies[mapOpToLatencyKey(buffer.op as Instructions)];
-        buffer.timeRemaining = latency;
+        buffer.timeRemaining = latency + newState.cacheMissLatency;
         newState.instructionTable[buffer.instructionTableIndex!].start_execution =
           newState.clockCycle;
         newState.notes.push(
@@ -155,6 +155,7 @@ export function execute(newState: SystemState) {
                 `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Cache miss latency is extra 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
+              newState.cacheMissLatency = 2;
             }
             break;
           case Instructions.LD:
@@ -168,6 +169,7 @@ export function execute(newState: SystemState) {
                 `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Cache miss latency is extra 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
+              newState.cacheMissLatency = 2;
             }
             break;
           case Instructions.L_S:
@@ -181,6 +183,7 @@ export function execute(newState: SystemState) {
                 `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Cache miss latency is extra 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
+              newState.cacheMissLatency = 2;
             }
             break;
           case Instructions.L_D:
@@ -197,6 +200,7 @@ export function execute(newState: SystemState) {
                 `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}.  Cache miss latency is extra 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
+              newState.cacheMissLatency = 2;
             }
             break;
           default:

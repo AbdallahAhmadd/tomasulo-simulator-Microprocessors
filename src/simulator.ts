@@ -42,6 +42,7 @@ export function initializeSystem(instructionQueue: string[], config: SystemConfi
     clockCycle: 0,
     pc: 0,
     notes: [],
+    cacheMissLatency: 0,
   };
 }
 
@@ -50,6 +51,10 @@ export function nextSystemState(systemState: SystemState): SystemState {
 
   newState.notes = [];
   newState.clockCycle++;
+
+  if (newState.cacheMissLatency > 0) {
+    newState.cacheMissLatency--;
+  }
 
   console.log("Clock Cycle", newState.clockCycle);
 
