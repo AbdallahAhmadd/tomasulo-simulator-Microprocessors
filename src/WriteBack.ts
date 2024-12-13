@@ -71,6 +71,9 @@ export function writeBack(newState: SystemState) {
         continue;
       }
       newState.instructionTable[buffer.instructionTableIndex!].writeResult = newState.clockCycle;
+      newState.notes.push(
+        `Instruction ${buffer.op} at Store Buffer ${i + 1} wrote its result at cycle ${newState.clockCycle}.`
+      );
       removeInstructionFromStation(buffer);
     }
   }
@@ -83,6 +86,9 @@ export function writeBack(newState: SystemState) {
   console.log("Chosen station: ", toBeWrttenStation);
   if (toBeWrttenStation.result !== undefined) {
     newState.CDB = { tag: toBeWrttenStation.tag, value: toBeWrttenStation.result };
+    newState.notes.push(
+      `Instruction ${toBeWrttenStation.op} from ${toBeWrttenStation.tag} wrote its result to CDB at cycle ${newState.clockCycle}.`
+    );
     newState.instructionTable[toBeWrttenStation.instructionTableIndex!].writeResult =
       newState.clockCycle;
     removeInstructionFromStation(toBeWrttenStation);

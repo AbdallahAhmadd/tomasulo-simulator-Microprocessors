@@ -96,8 +96,13 @@ export const ViewOutput: React.FC<viewOutputProps> = ({
         <RegisterFile registerFile={systemState.intRegisterFile} />
       </div>
       <div className="notes">
-        <h2>Notes: {systemState.notes}</h2>
-      </div>
+      <h2>Notes:</h2>
+      <ul>
+        {systemState.notes.map((note, index) => (
+          <li key={index}>{note}</li>
+        ))}
+      </ul>
+    </div>
     </div>
   );
 };
