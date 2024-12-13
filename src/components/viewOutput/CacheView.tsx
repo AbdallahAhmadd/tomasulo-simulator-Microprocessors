@@ -29,7 +29,6 @@ const CacheView: React.FC<CacheViewProps> = ({ Cache, blockSize, missPenalty }) 
     }));
   }
   useEffect(() => {
-    console.log("Miss Penalty: ", missPenalty);
     if (missPenalty == 0) {
       const clonedCache = deepCloneBlockArray(Cache);
       setCache(clonedCache);
