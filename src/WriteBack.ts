@@ -5,6 +5,9 @@ function removeInstructionFromStation(station: LoadBuffer | ReservationStation |
   station.busy = false;
   delete station.timeRemaining;
   delete station.instructionTableIndex;
+  if ("result" in station) {
+    delete station.result;
+  }
 }
 export function writeBack(newState: SystemState) {
   //check if there is any instruction that is ready to be written and push it in an array
@@ -78,7 +81,7 @@ export function writeBack(newState: SystemState) {
       }
       newState.instructionTable[buffer.instructionTableIndex!].writeResult = newState.clockCycle;
       newState.notes.push(
-        `Instruction ${buffer.op} at Store Buffer ${i + 1} wrote its result at cycle ${newState.clockCycle}.`
+        `Instruction ${buffer.op} at Store Buffer ${i + 1} wrote its result at cycle ${newState.clockCycle}.`,
       );
       removeInstructionFromStation(buffer);
     }
@@ -93,7 +96,7 @@ export function writeBack(newState: SystemState) {
   if (toBeWrttenStation.result !== undefined) {
     newState.CDB = { tag: toBeWrttenStation.tag, value: toBeWrttenStation.result };
     newState.notes.push(
-      `Instruction ${toBeWrttenStation.op} from ${toBeWrttenStation.tag} wrote its result to CDB at cycle ${newState.clockCycle}.`
+      `Instruction ${toBeWrttenStation.op} from ${toBeWrttenStation.tag} wrote its result to CDB at cycle ${newState.clockCycle}.`,
     );
     newState.instructionTable[toBeWrttenStation.instructionTableIndex!].writeResult =
       newState.clockCycle;
@@ -185,10 +188,9 @@ export function getReservationStationWithHighestDependencies(
 
     newState.storeBuffer.forEach((station) => {
       if (station.qj === instruction.tag || station.qk === instruction.tag) counts[index]++;
-
     });
     newState.loadBuffer.forEach((station) => {
-      if (station.q === instruction.tag ) counts[index]++;
+      if (station.q === instruction.tag) counts[index]++;
     });
   });
 

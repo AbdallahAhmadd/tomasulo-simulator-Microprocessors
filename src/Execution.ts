@@ -93,7 +93,6 @@ export function execute(newState: SystemState) {
         const instruction = newState.instructionTable[station.instructionTableIndex!];
         instruction.start_execution = newState.clockCycle;
         instruction.end_execution = newState.clockCycle + latency - 1;
-
         newState.notes.push(
           `Instruction ${station.op} at I${index + 1} started execution at cycle ${newState.clockCycle}.`,
         );
@@ -102,7 +101,6 @@ export function execute(newState: SystemState) {
       if (station.timeRemaining === 1) {
         const value1 = station.vj;
         const value2 = station.vk;
-
         if (station.op === Instructions.BEQ || station.op === Instructions.BNE) {
           station.result = AluOperation(value1, value2, Instructions.SUB_D);
           const branchTaken =
@@ -167,7 +165,7 @@ export function execute(newState: SystemState) {
               buffer.timeRemaining = 0;
             } catch (error) {
               newState.notes.push(
-                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`,
+                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Cache miss latency is extra 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -180,7 +178,7 @@ export function execute(newState: SystemState) {
               buffer.timeRemaining = 0;
             } catch (error) {
               newState.notes.push(
-                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`,
+                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Cache miss latency is extra 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }
@@ -196,7 +194,7 @@ export function execute(newState: SystemState) {
               );
             } catch (error) {
               newState.notes.push(
-                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}. Retrying in 2 cycles.`,
+                `Cache miss for instruction ${buffer.op} at L${i + 1} during cycle ${newState.clockCycle}.  Cache miss latency is extra 2 cycles.`,
               );
               buffer.timeRemaining = 2; // Assuming 2 cycles for cache miss
             }

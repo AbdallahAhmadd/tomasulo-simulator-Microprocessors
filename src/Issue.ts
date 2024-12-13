@@ -18,7 +18,11 @@ function checkBranch(systemState: SystemState): boolean {
   const { intAddReservationStations } = systemState;
 
   for (const rs of intAddReservationStations) {
-    if (!rs.result && (rs.op === Instructions.BEQ || rs.op === Instructions.BNE)) {
+    if (
+      rs.busy &&
+      rs.result === undefined &&
+      (rs.op === Instructions.BEQ || rs.op === Instructions.BNE)
+    ) {
       return true;
     }
   }
@@ -48,7 +52,9 @@ export function issueInstruction(systemState: SystemState): void {
     console.log(
       "Branch instruction is being issued or executed. Stopping issue of new instructions.",
     );
-    notes.push("Branch instruction is being issued or executed. Stopping issue of new instructions.");
+    notes.push(
+      "Branch instruction is being issued or executed. Stopping issue of new instructions.",
+    );
     return;
   }
   if (pc >= instructionQueue.length) {
