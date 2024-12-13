@@ -80,24 +80,65 @@ function App() {
   const [showExecutionPage, setShowExecutionPage] = useState(false);
 
   const handleExecution = () => {
-    if (!latencies) {
-      toast.error("Please provide latency values.");
-      return;
-    }
+    // if (!latencies) {
+    //   toast.error("Please provide latency values.");
+    //   return;
+    // }
+    // const SystemConfig: SystemConfig = {
+    //   fpAddReservationStationsSize: fpAddReservationStationsNums,
+    //   fpMulReservationStationsSize: fpMulReservationStationsNums,
+    //   intAddReservationStationsSize: intAddReservationStationsNums,
+    //   intMulReservationStationsSize: intMulReservationStationsNums,
+    //   fpRegisterFileSize,
+    //   intRegisterFileSize,
+    //   loadBufferSize,
+    //   storeBufferSize,
+    //   cacheSize,
+    //   blockSize,
+    //   latencies,
+    // };
     const SystemConfig: SystemConfig = {
-      fpAddReservationStationsSize: fpAddReservationStationsNums,
-      fpMulReservationStationsSize: fpMulReservationStationsNums,
-      intAddReservationStationsSize: intAddReservationStationsNums,
-      intMulReservationStationsSize: intMulReservationStationsNums,
-      fpRegisterFileSize,
-      intRegisterFileSize,
-      loadBufferSize,
-      storeBufferSize,
-      cacheSize,
-      blockSize,
-      latencies,
+      fpAddReservationStationsSize: 2,
+      fpMulReservationStationsSize: 2,
+      intAddReservationStationsSize: 2,
+      fpRegisterFileSize: 12,
+      intRegisterFileSize: 12,
+      loadBufferSize: 2,
+      storeBufferSize: 2,
+      cacheSize: 128,
+      blockSize: 32,
+      latencies: {
+        ADD_D: 2,
+        ADD_S: 2,
+        BNE: 2,
+        BEQ: 2,
+        DADDI: 2,
+        DSUBI: 2,
+        DIV_D: 2,
+        DIV_S: 2,
+        LD: 2,
+        LW: 2,
+        L_S: 2,
+        L_D: 2,
+        MUL_D: 2,
+        MUL_S: 2,
+        SD: 2,
+        S_S: 2,
+        S_D: 2,
+        SUB_D: 2,
+        SUB_S: 2,
+        SW: 2,
+      },
     };
     const sysState = initializeSystem(instructionQueue, SystemConfig);
+    //for testing purposes only
+    sysState.memory.populateMemory();
+    for (let i = 0; i < 12; i++) {
+      sysState.fpRegisterFile[i].value = i * 1.5;
+    }
+    for (let i = 0; i < 12; i++) {
+      sysState.intRegisterFile[i].value = i;
+    }
     setSystemState(sysState);
     console.log("SystemConfig:", SystemConfig);
     console.log("System State: ", sysState);
@@ -116,10 +157,6 @@ function App() {
       setSystemState(nextSystemState(systemState));
     }
   }
-
-  useEffect(() => {
-    console.log("System State:", systemState);
-  }, [systemState]);
 
   return (
     <>

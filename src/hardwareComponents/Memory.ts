@@ -48,4 +48,12 @@ export class Memory {
   public getMemory(): Uint8Array {
     return this.memory;
   }
+
+  public populateMemory(): void {
+    let currentValue = 0x00;
+    for (let i = 0; i < 1024; i += 1) {
+      this.memory[i] = currentValue;
+      currentValue = (currentValue + 1) & 0xff;
+    }
+  }
 }
